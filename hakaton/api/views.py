@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,)
 
-from models import (Sales, Shops, Categories, Forecast)
+from products.models import (Sales, Shops, Categories, Forecast)
 
 from .filter import SalesFilter, CategoriesFilter, ShopsFilter, ForecastFilter
 from .pagination import LimitPageNumberPagination
