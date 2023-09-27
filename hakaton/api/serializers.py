@@ -121,7 +121,7 @@ class ForecastPostSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = User
 #         fields = ('email', 'id', 'username',
-#                   'first_name', 'last_name', 'is_subscribed',
+#                   'first_name', 'last_name',
 #                   )
 
 
