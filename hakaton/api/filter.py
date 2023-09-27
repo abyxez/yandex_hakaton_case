@@ -1,5 +1,5 @@
 import django_filters as filters
-from models import (Categories, Shops, Sales, Forecast)
+from products.models import (Categories, Shops, Sales, Forecast)
 
 
 class SalesFilter(filters.FilterSet):

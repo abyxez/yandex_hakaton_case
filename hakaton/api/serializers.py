@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from models import (Categories, Shops, Sales, Forecast)
+from products.models import (Categories, Shops, Sales, Forecast)
+# from djoser.serializers import UserCreateSerializer, UserSerializer
+# from rest_framework.validators import UniqueValidator
+# from products.validators import validate_username
 
 
 class ShopsSerializer(serializers.ModelSerializer):
@@ -111,3 +114,30 @@ class ForecastPostSerializer(serializers.ModelSerializer):
             instance,
             context={'request': request}
         ).data
+
+# class UserListSerializer(UserSerializer):
+#     """Сериализатор для списка пользователей."""
+
+#     class Meta:
+#         model = User
+#         fields = ('email', 'id', 'username',
+#                   'first_name', 'last_name',
+#                   )
+
+
+# class UserCreateSerializer(UserCreateSerializer):
+#     """Сериализатор для создания пользователей."""
+#     username = serializers.CharField(
+#         validators=[UniqueValidator(queryset=User.objects.all()),
+#                     validate_username]
+#     )
+#     email = serializers.EmailField(
+#         validators=[UniqueValidator(queryset=User.objects.all())]
+#     )
+
+#     class Meta:
+#         model = User
+#         fields = (
+#             'id', 'email', 'username', 'first_name',
+#             'last_name', 'password'
+#         )
