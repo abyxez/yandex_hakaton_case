@@ -18,7 +18,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = CategoriesFilter
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
 class SalesViewSet(viewsets.ModelViewSet):
@@ -49,3 +49,8 @@ class ForecastViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return ForecastGetSerializer
         return ForecastPostSerializer
+    
+# class UserViewSet(views.UserViewSet):
+#     serializer_class = UserListSerializer
+#     pagination_class = LimitPageNumberPagination
+#     permission_classes = (IsAuthenticated,)

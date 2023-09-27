@@ -150,8 +150,32 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
 }
+
+# SIMPLE_JWT = {
+#    'AUTH_HEADER_TYPES': ('Bearer',),
+# }
+
+# DJOSER = {
+#     'LOGIN_FIELD': 'email',
+#     'HIDE_USERS': False,
+#     'SERIALIZERS': {
+#         'user_create': 'api.serializers.UserCreateSerializer',
+#         'user': 'api.serializers.UserListSerializer',
+#         'current_user': 'api.serializers.UserListSerializer',
+#     },
+#     'PERMISSIONS': {
+#         'set_password': ('djoser.permissions.CurrentUserOrAdmin',),
+#         'user': ('rest_framework.permissions.IsAuthenticated',),
+#         'user_list': ('rest_framework.permissions.AllowAny',),
+#         'user_create': ('rest_framework.permissions.AllowAny',),
+#         'user_delete': ('rest_framework.permissions.IsAdminUser',),
+#         'token_create': ('rest_framework.permissions.AllowAny',),
+#         'token_destroy': ('rest_framework.permissions.IsAuthenticated',),
+#     },
+# }
+

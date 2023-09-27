@@ -48,8 +48,17 @@ class ForecastAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+# class UserAdmin(admin.ModelAdmin):
+#     """Настройки для админ зоны пользователей"""
+#     list_display = ('id', 'email', 'username',)
+#     search_fields = ('email', 'username',)
+#     list_filter = ('email', 'username',)
+#     empty_value_display = '-empty-'
+
+
 admin.site.register(Shops, ShopsAdmin)
 admin.site.register(Categories, CategoriesAdmin)
 admin.site.register(Sales, SalesAdmin)
 admin.site.register(Forecast, ForecastAdmin)
+# admin.site.register(User, UserAdmin)
 
