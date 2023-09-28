@@ -22,6 +22,8 @@ class SimpleSalesSerializer(serializers.ModelSerializer):
         model = Sales
         fields = ('date', 'sales_type', 'sales_units',
                   'sales_units_promo', 'sales_rub', 'sales_run_promo')
+        
+    
 
 
 class SalesSerializer(serializers.ModelSerializer):
@@ -35,6 +37,8 @@ class SalesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sales
         fields = ('id', 'store', 'sku', 'fact')
+
+ 
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
