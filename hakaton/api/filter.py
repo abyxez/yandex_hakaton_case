@@ -1,28 +1,28 @@
 import django_filters as filters
-from products.models import (Categories, Shops, Sales, Forecast)
+from products.models import (Category, Shop, Sale, Forecast)
 
 
-class SalesFilter(filters.FilterSet):
+class SaleFilter(filters.FilterSet):
     """Фильтры для продаж. """
 
     class Meta:
-        model = Sales
+        model = Sale
         fields = ('sku', 'store',)
 
 
-class CategoriesFilter(filters.FilterSet):
+class CategoryFilter(filters.FilterSet):
     """Фильтр для категорий"""
 
     class Meta:
-        model = Categories
+        model = Category
         fields = ('sku', 'group', 'category', 'subcategory',)
 
 
-class ShopsFilter(filters.FilterSet):
+class ShopFilter(filters.FilterSet):
     """Фильтр для магазинов"""
 
     class Meta:
-        model = Shops
+        model = Shop
         fields = ('store', 'city', 'divizion',
                   'format', 'loc', 'size', 'is_active',)
 
@@ -32,4 +32,4 @@ class ForecastFilter(filters.FilterSet):
 
     class Meta:
         model = Forecast
-        fields = ('store', 'sku', 'forecast_date',)
+        fields = ('store', 'sku', )

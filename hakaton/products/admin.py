@@ -1,10 +1,9 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register
+from products.models import (Category, Shop, Sale, Forecast)
 
 
-from products.models import (Categories, Shops, Sales, Forecast)
-
-
-class ShopsAdmin(admin.ModelAdmin):
+@register(Shop)
+class ShopAdmin(ModelAdmin):
     """Настройки для админ зоны магазинов"""
     list_display = ('id', 'store', 'city', 'divizion',
                     'format', 'loc', 'size', 'is_active',)
@@ -14,7 +13,8 @@ class ShopsAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
 
 
-class CategoriesAdmin(admin.ModelAdmin):
+@register(Category)
+class CategoryAdmin(ModelAdmin):
     """
     Настройки для админ зоны категорий.
     """
@@ -24,7 +24,8 @@ class CategoriesAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
 
 
-class SalesAdmin(admin.ModelAdmin):
+@register(Sale)
+class SaleAdmin(ModelAdmin):
     """
     Настройки для админ зоны продаж.
     """
@@ -36,19 +37,20 @@ class SalesAdmin(admin.ModelAdmin):
     empty_value_display = '-empty-'
 
 
-class ForecastAdmin(admin.ModelAdmin):
+@register(Forecast)
+class ForecastAdmin(ModelAdmin):
     """
     Настройки для админ зоны прогноза продаж.
     """
 
-    list_display = ('id', 'store', 'sku', 'forecast_date',
+    list_display = ('id', 'store', 'sku', 
                     'date', 'sales_units',)
     search_fields = ('store', 'sku',)
-    list_filter = ('store', 'sku', 'forecast_date', 'date')
+    list_filter = ('store', 'sku', 'date')
     empty_value_display = '-пусто-'
 
 
-# class UserAdmin(admin.ModelAdmin):
+# class UserAdmin(ModelAdmin):
 #     """Настройки для админ зоны пользователей"""
 #     list_display = ('id', 'email', 'username',)
 #     search_fields = ('email', 'username',)
@@ -56,9 +58,5 @@ class ForecastAdmin(admin.ModelAdmin):
 #     empty_value_display = '-empty-'
 
 
-admin.site.register(Shops, ShopsAdmin)
-admin.site.register(Categories, CategoriesAdmin)
-admin.site.register(Sales, SalesAdmin)
-admin.site.register(Forecast, ForecastAdmin)
-# admin.site.register(User, UserAdmin)
+# site.register(User, UserAdmin)
 

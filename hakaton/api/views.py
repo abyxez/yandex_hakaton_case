@@ -2,40 +2,40 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,)
 
-from products.models import (Sales, Shops, Categories, Forecast)
+from products.models import (Sale, Shop, Category, Forecast)
 
-from .filter import SalesFilter, CategoriesFilter, ShopsFilter, ForecastFilter
+from .filter import SaleFilter, CategoryFilter, ShopFilter, ForecastFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnlyPermission
-from .serializers import (CategoriesSerializer, SalesSerializer,
-                          ShopsSerializer, ForecastGetSerializer,
+from .serializers import (CategorySerializer, SaleSerializer,
+                          ShopSerializer, ForecastGetSerializer,
                           ForecastPostSerializer)
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = CategoriesFilter
+    filterset_class = CategoryFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
-class SalesViewSet(viewsets.ModelViewSet):
-    queryset = Sales.objects.all()
-    serializer_class = SalesSerializer
+class SaleViewSet(viewsets.ModelViewSet):
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
     filter_backends = (DjangoFilterBackend,)
     search_fields = ('^store', '^sku',)
     pagination_class = LimitPageNumberPagination
-    filterset_class = SalesFilter
+    filterset_class = SaleFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
 class ShopsViewSet(viewsets.ModelViewSet):
-    queryset = Shops.objects.all()
+    queryset = Shop.objects.all()
     pagination_class = LimitPageNumberPagination
-    serializer_class = ShopsSerializer
-    filterset_class = ShopsFilter
+    serializer_class = ShopSerializer
+    filterset_class = ShopFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 

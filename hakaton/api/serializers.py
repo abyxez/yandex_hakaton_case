@@ -1,47 +1,47 @@
 from rest_framework import serializers
-from products.models import (Categories, Shops, Sales, Forecast)
+from products.models import (Category, Shop, Sale, Forecast)
 # from djoser.serializers import UserCreateSerializer, UserSerializer
 # from rest_framework.validators import UniqueValidator
 # from products.validators import validate_username
 
 
-class ShopsSerializer(serializers.ModelSerializer):
+class ShopSerializer(serializers.ModelSerializer):
     """Сериализатор для магазинов."""
 
     class Meta:
-        model = Shops
+        model = Shop
         fields = '__all__'
 
 
-class SimpleSalesSerializer(serializers.ModelSerializer):
+class SimpleSaleSerializer(serializers.ModelSerializer):
     """
     Простой Сериализатор  для продаж  для просмотра.
     """
 
     class Meta:
-        model = Sales
+        model = Sale
         fields = ('date', 'sales_type', 'sales_units',
                   'sales_units_promo', 'sales_rub', 'sales_run_promo')
 
 
-class SalesSerializer(serializers.ModelSerializer):
+class SaleSerializer(serializers.ModelSerializer):
     """
     Сериализатор  для продаж .
     """
     store = serializers.StringRelatedField(read_only=True)
     sku = serializers.StringRelatedField(read_only=True)
-    fact = SimpleSalesSerializer(many=True, read_only=True)
+    fact = SimpleSaleSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Sales
+        model = Sale
         fields = ('id', 'store', 'sku', 'fact')
 
 
-class CategoriesSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для категорий товаров."""
 
     class Meta:
-        model = Categories
+        model = Category
         fields = '__all__'
 
 
