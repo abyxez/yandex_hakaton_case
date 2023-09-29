@@ -30,9 +30,6 @@ class SaleViewSet(viewsets.ModelViewSet):
     filterset_class = SaleFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
-    
-  
-
 
 class ShopsViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
