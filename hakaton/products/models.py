@@ -1,28 +1,28 @@
-from django.db.models import CharField, SlugField, ForeignKey, Model, CASCADE, FloatField, PositiveIntegerField, IntegerField, DateField
+from django.db import models
 # from django.contrib.auth.models import AbstractUser
 
 
-class Product(Model):
-    name = CharField(
-        'Название продукта',
-        unique=True,
-        max_length=200,
-    )
+# class Product(models.Model):
+#     name = models.CharField(
+#         'Название продукта',
+#         unique=True,
+#         max_length=200,
+#     )
 
 
-class Shop(Model):
+class Shop(models.Model):
     """Модель магазинов"""
-    store = CharField(verbose_name='Название магазина',
+    store = models.CharField(verbose_name='Название магазина',
                              max_length=200, unique=True)
-    city = CharField(verbose_name='Город', max_length=200)
-    divizion = CharField(verbose_name='Дивизион', max_length=200)
-    format = SlugField(verbose_name='Формат магазина',
+    city = models.CharField(verbose_name='Город', max_length=200)
+    divizion = models.CharField(verbose_name='Дивизион', max_length=200)
+    format = models.SlugField(verbose_name='Формат магазина',
                               max_length=200)
-    loc = SlugField(verbose_name='Локация магазина',
+    loc = models.SlugField(verbose_name='Локация магазина',
                            max_length=200)
-    size = SlugField(verbose_name='Тип размера магазина',
+    size = models.SlugField(verbose_name='Тип размера магазина',
                             max_length=200)
-    is_active = CharField(
+    is_active = models.CharField(
         verbose_name='Флаг активного магазина', max_length=200)
 
     class Meta:
@@ -34,19 +34,19 @@ class Shop(Model):
         return self.store
 
 
-class Category(Model):
+class Category(models.Model):
     """Модель категорий"""
-    sku = CharField(
+    sku = models.CharField(
         'Наименование товара ',
         max_length=200,
     )
-    group = CharField(verbose_name='Группа товара ',
+    group = models.CharField(verbose_name='Группа товара ',
                              max_length=200)
-    category = CharField(verbose_name='Категория товара',
+    category = models.CharField(verbose_name='Категория товара',
                                 max_length=200)
-    subcategory = CharField(verbose_name='Подкатегория товара',
+    subcategory = models.CharField(verbose_name='Подкатегория товара',
                                    max_length=200)
-    uom = SlugField(
+    uom = models.SlugField(
         verbose_name='Маркер товара -на вес или шт')
 
     class Meta:
@@ -58,28 +58,28 @@ class Category(Model):
         return self.sku
 
 
-class Sale(Model):
+class Sale(models.Model):
     """Модель продаж"""
-    store = CharField(
+    store = models.CharField(
         # Shop, on_delete=CASCADE,
         # related_name='sales',
         verbose_name='магазин',
         max_length=200,
     )
-    sku = CharField(
+    sku = models.CharField(
         verbose_name='товар',
         max_length=200,
     )
 
-    date = DateField(verbose_name='Дата продажи товара', blank=True, null=True)
-    sales_type = PositiveIntegerField(verbose_name='Флаг наличия промо')
-    sales_units = FloatField(
+    date = models.DateField(verbose_name='Дата продажи товара', blank=True, null=True)
+    sales_type = models.PositiveIntegerField(verbose_name='Флаг наличия промо')
+    sales_units = models.FloatField(
         verbose_name='Число проданных товаров без признака промо')
-    sales_units_promo = FloatField(
+    sales_units_promo = models.FloatField(
         verbose_name='Число проданных товаров c признаком промо')
-    sales_rub = FloatField(
+    sales_rub = models.FloatField(
         verbose_name='Цена проданных товаров без признака промо')
-    sales_rub_promo = FloatField(
+    sales_rub_promo = models.FloatField(
         verbose_name='Цена проданных товаров c признаком промо')
 
     class Meta:
@@ -93,24 +93,24 @@ class Sale(Model):
                 f'{self.sales_rub} {self.sales_rub_promo}')
 
 
-class Forecast(Model):
+class Forecast(models.Model):
     """Модель прогноза продаж."""
 
-    store = CharField(
+    store = models.CharField(
         # Shop, on_delete=CASCADE,
         # related_name='forecast',
         verbose_name='магазин',
         max_length=200,
     )
-    sku = CharField(
+    sku = models.CharField(
         # Product, on_delete=CASCADE,
         # related_name='forecast',
         verbose_name='товар',
         max_length=200,
     )
     # forecast_date = DateField(verbose_name='Дата отчета')
-    date = DateField(verbose_name='Дата прогноза продажи')
-    sales_units = PositiveIntegerField(
+    date = models.DateField(verbose_name='Дата прогноза продажи')
+    sales_units = models.PositiveIntegerField(
         verbose_name='Прогнозируемый спрос в шт',
     )
 
@@ -125,7 +125,7 @@ class Forecast(Model):
 
 # class User(AbstractUser):
 #     """Модель пользователей"""
-#     username = CharField(
+#     username = models.CharField(
 #         verbose_name='Имя пользователя',
 #         validators=(validate_username,),
 #         max_length=150,
@@ -133,27 +133,27 @@ class Forecast(Model):
 #         blank=False,
 #         null=False
 #     )
-#     email = EmailField(
+#     email = models.EmailField(
 #         verbose_name='Email',
 #         max_length=254,
 #         unique=True,
 #         blank=False,
 #         null=False
 #     )
-#     password = CharField(
+#     password = models.CharField(
 #         verbose_name='Пароль',
 #         max_length=150,
 #         blank=False,
 #         null=False
 #     )
 
-#     first_name = CharField(
+#     first_name = models.CharField(
 #         verbose_name='Имя',
 #         max_length=150,
 #         blank=False,
 #         null=False
 #     )
-#     last_name = CharField(
+#     last_name = models.CharField(
 #         verbose_name='Фамилия',
 #         max_length=150,
 #         blank=False,
