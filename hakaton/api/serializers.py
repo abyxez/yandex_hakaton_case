@@ -1,8 +1,28 @@
-from rest_framework import serializers
-from products.models import (Category, Shop, Sale, Forecast)
 # from djoser.serializers import UserCreateSerializer, UserSerializer
 # from rest_framework.validators import UniqueValidator
 # from products.validators import validate_username
+from datetime import datetime
+
+from products.models import Category, Forecast, Product, Sale, Shop, Store
+from rest_framework import serializers
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+class StoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Store
+        exclude = (
+            "id",
+            "name",
+        )
 
 
 class ShopSerializer(serializers.ModelSerializer):
@@ -10,7 +30,26 @@ class ShopSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Shop
-        fields = '__all__'
+        fields = (
+            "store",
+            "city",
+            "divizion",
+            "format",
+            "loc",
+            "size",
+            "is_active",
+        )
+
+    def to_representation(self, instance):
+        return {
+            "store": instance.store.hash_id,
+            "city": instance.city,
+            "divizion": instance.divizion,
+            "format": instance.format,
+            "loc": instance.loc,
+            "size": instance.size,
+            "is_active": instance.is_active,
+        }
 
 
 class SimpleSaleSerializer(serializers.ModelSerializer):
@@ -20,21 +59,42 @@ class SimpleSaleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sale
-        fields = ('date', 'sales_type', 'sales_units',
-                  'sales_units_promo', 'sales_rub', 'sales_run_promo')
+        fields = (
+            "date",
+            "sales_type",
+            "sales_units",
+            "sales_units_promo",
+            "sales_rub",
+            "sales_rub_promo",
+        )
 
 
 class SaleSerializer(serializers.ModelSerializer):
     """
     Сериализатор  для продаж .
     """
-    store = serializers.StringRelatedField(read_only=True)
-    sku = serializers.StringRelatedField(read_only=True)
-    fact = SimpleSaleSerializer(many=True, read_only=True)
+
+    store = StoreSerializer(read_only=True)
+    sku = ProductSerializer(read_only=True)
+    fact = SimpleSaleSerializer(read_only=True, source="*")
 
     class Meta:
         model = Sale
-        fields = ('id', 'store', 'sku', 'fact')
+        fields = ("store", "sku", "fact")
+
+    def to_representation(self, instance):
+        return {
+            "store": instance.store.hash_id,
+            "sku": instance.sku.hash_id,
+            "fact": {
+                "date": instance.date,
+                "sales_type": instance.sales_type,
+                "sales_units": instance.sales_units,
+                "sales_units_promo": instance.sales_units_promo,
+                "sales_rub": instance.sales_rub,
+                "sales_rub_promo": instance.sales_rub_promo,
+            },
+        }
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -42,7 +102,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = (
+            "sku",
+            "group",
+            "category",
+            "subcategory",
+            "uom",
+        )
 
 
 class SimpleUnitsPostSerializer(serializers.ModelSerializer):
@@ -52,54 +118,67 @@ class SimpleUnitsPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Forecast
-        fields = ('date', 'sales_units')
+        fields = ("date", "sales_units")
 
 
 class SimpleForecastPostSerializer(serializers.ModelSerializer):
     """
     Простой сериализатор товара для создания прогноза товара.
     """
+
     sales_units = SimpleUnitsPostSerializer(many=True, read_only=True)
     sku = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Forecast
-        fields = ('sku', 'sales_units')
+        fields = ("sku", "sales_units")
 
 
 class ForecastGetSerializer(serializers.ModelSerializer):
     """
     Cериализатор для просмотра прогноза товара.
     """
+
     store = serializers.StringRelatedField(read_only=True)
     sku = serializers.StringRelatedField(read_only=True)
     forecast = SimpleUnitsPostSerializer(many=True, read_only=True)
+    forecast_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Forecast
-        fields = ('store', 'sku', 'forecast_date', 'forecast')
+        fields = ("store", "sku", "forecast_date", "forecast")
+
+    def get_forecast_date(self):
+        return datetime.today().strftime("%Y-%m-%d")
 
 
 class ForecastPostSerializer(serializers.ModelSerializer):
     """
     Cериализатор для создания прогноза товара.
     """
+
     store = serializers.StringRelatedField(read_only=True)
     forecast = SimpleForecastPostSerializer(many=True)
-    forecast_date = serializers.StringRelatedField(read_only=True)
+    forecast_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Forecast
-        fields = ('store', 'forecast_date', 'forecast')
+        fields = ("store", "forecast_date", "forecast")
+
+    def get_forecast_date(self):
+        pass
 
     def create(self, validated_data):
         """Создание прогноза."""
-        store = validated_data.pop('store')
-        forecast = validated_data.pop('forecast')
-        forecast_date = validated_data.pop('forecast_date')
-        data = Forecast.objects.create(store=store, forecast=forecast,
-                                       forecast_date=forecast_date,
-                                       **validated_data)
+        store = validated_data.pop("store")
+        forecast = validated_data.pop("forecast")
+        forecast_date = validated_data.pop("forecast_date")
+        data = Forecast.objects.create(
+            store=store,
+            forecast=forecast,
+            forecast_date=forecast_date,
+            **validated_data
+        )
         data.save()
         return data
 
@@ -109,11 +188,9 @@ class ForecastPostSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-        request = self.context.get('request')
-        return ForecastGetSerializer(
-            instance,
-            context={'request': request}
-        ).data
+        request = self.context.get("request")
+        return ForecastGetSerializer(instance, context={"request": request}).data
+
 
 # class UserListSerializer(UserSerializer):
 #     """Сериализатор для списка пользователей."""

@@ -1,18 +1,22 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,)
+from products.models import Category, Forecast, Sale, Shop
+from rest_framework import mixins, viewsets
+from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from products.models import (Sale, Shop, Category, Forecast)
-
-from .filter import SaleFilter, CategoryFilter, ShopFilter, ForecastFilter
+from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnlyPermission
-from .serializers import (CategorySerializer, SaleSerializer,
-                          ShopSerializer, ForecastGetSerializer,
-                          ForecastPostSerializer)
+from .serializers import (
+    CategorySerializer,
+    ForecastGetSerializer,
+    ForecastPostSerializer,
+    SaleSerializer,
+    ShopSerializer,
+)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = LimitPageNumberPagination
@@ -21,17 +25,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
-class SaleViewSet(viewsets.ModelViewSet):
+class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     filter_backends = (DjangoFilterBackend,)
-    search_fields = ('^store', '^sku',)
+    search_fields = (
+        "^store",
+        "^sku",
+    )
     pagination_class = LimitPageNumberPagination
     filterset_class = SaleFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
-class ShopsViewSet(viewsets.ModelViewSet):
+class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Shop.objects.all()
     pagination_class = LimitPageNumberPagination
     serializer_class = ShopSerializer
@@ -39,17 +46,20 @@ class ShopsViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
-class ForecastViewSet(viewsets.ModelViewSet):
+class ForecastViewSet(
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
     queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
     filterset_class = ForecastFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
     def get_serializer_class(self):
-        if self.action in ['list', 'retrieve']:
+        if self.action in ["list", "retrieve"]:
             return ForecastGetSerializer
         return ForecastPostSerializer
-    
+
+
 # class UserViewSet(views.UserViewSet):
 #     serializer_class = UserListSerializer
 #     pagination_class = LimitPageNumberPagination
