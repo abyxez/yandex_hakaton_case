@@ -51,7 +51,7 @@ class Store(Model):
     )
 
 
-class Shop(Model):
+class Shop(models.Model):
     """Модель магазинов"""
 
     store = ForeignKey(
@@ -126,7 +126,7 @@ class Category(Model):
         return self.sku
 
 
-class Sale(Model):
+class Sale(models.Model):
     """Модель продаж"""
 
     store = ForeignKey(
@@ -166,7 +166,7 @@ class Sale(Model):
         )
 
 
-class Forecast(Model):
+class Forecast(models.Model):
     """Модель прогноза продаж."""
 
     store = ForeignKey(
@@ -198,7 +198,7 @@ class Forecast(Model):
 
 # class User(AbstractUser):
 #     """Модель пользователей"""
-#     username = CharField(
+#     username = models.CharField(
 #         verbose_name='Имя пользователя',
 #         validators=(validate_username,),
 #         max_length=150,
@@ -206,27 +206,27 @@ class Forecast(Model):
 #         blank=False,
 #         null=False
 #     )
-#     email = EmailField(
+#     email = models.EmailField(
 #         verbose_name='Email',
 #         max_length=254,
 #         unique=True,
 #         blank=False,
 #         null=False
 #     )
-#     password = CharField(
+#     password = models.CharField(
 #         verbose_name='Пароль',
 #         max_length=150,
 #         blank=False,
 #         null=False
 #     )
 
-#     first_name = CharField(
+#     first_name = models.CharField(
 #         verbose_name='Имя',
 #         max_length=150,
 #         blank=False,
 #         null=False
 #     )
-#     last_name = CharField(
+#     last_name = models.CharField(
 #         verbose_name='Фамилия',
 #         max_length=150,
 #         blank=False,
