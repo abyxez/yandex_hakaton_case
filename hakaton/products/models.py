@@ -51,7 +51,7 @@ class Store(Model):
     )
 
 
-class Shop(models.Model):
+class Shop(Model):
     """Модель магазинов"""
 
     store = ForeignKey(
@@ -126,7 +126,7 @@ class Category(Model):
         return self.sku
 
 
-class Sale(models.Model):
+class Sale(Model):
     """Модель продаж"""
 
     store = ForeignKey(
@@ -166,7 +166,7 @@ class Sale(models.Model):
         )
 
 
-class Forecast(models.Model):
+class Forecast(Model):
     """Модель прогноза продаж."""
 
     store = ForeignKey(

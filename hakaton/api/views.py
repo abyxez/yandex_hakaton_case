@@ -1,8 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from products.models import Category, Forecast, Sale, Shop
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, filters
 from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 
 from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter
 from .pagination import LimitPageNumberPagination
@@ -20,15 +20,16 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = LimitPageNumberPagination
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_class = CategoryFilter
+    search_fields = ("^sku",)
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
 class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = (
         "^store",
         "^sku",
@@ -41,6 +42,10 @@ class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Shop.objects.all()
     pagination_class = LimitPageNumberPagination
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    search_fields = (
+        "^store",
+    )
     serializer_class = ShopSerializer
     filterset_class = ShopFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
@@ -52,7 +57,7 @@ class ForecastViewSet(
     queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
     filterset_class = ForecastFilter
-    permission_classes = (IsAdminOrReadOnlyPermission,)
+    permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
         if self.action in ["list", "retrieve"]:
