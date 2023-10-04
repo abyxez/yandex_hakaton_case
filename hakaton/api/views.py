@@ -1,8 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from products.models import Category, Forecast, Sale, Shop
+from products.models import Category, Forecast, Sale, Shop, Product, Store
 from rest_framework import mixins, viewsets, filters
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.decorators import action
+from django.http import HttpResponse, StreamingHttpResponse
+import pandas as pd
+import xlwt
+from excel_response import ExcelResponse
+from django.shortcuts import get_object_or_404
 
 from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter
 from .pagination import LimitPageNumberPagination
@@ -64,6 +70,20 @@ class ForecastViewSet(
             return ForecastGetSerializer
         return ForecastPostSerializer
 
+
+    @action(
+        methods=['GET'],
+        detail=False,
+        url_path='download_forecast_list',
+        permission_classes=(AllowAny,),
+    )
+    def download_forecast_list(fact_sku, fact_store):
+        sku = get_object_or_404(Category, sku=fact_sku)
+        store = get_object_or_404(Shop, store=fact_store)
+        data = Forecast.objects.filter(sku=sku, store=store)
+        return ExcelResponse(data)
+    
+    
 
 # class UserViewSet(views.UserViewSet):
 #     serializer_class = UserListSerializer

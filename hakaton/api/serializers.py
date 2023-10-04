@@ -196,12 +196,14 @@ class ForecastPostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создание прогноза."""
         store = validated_data.pop("store")
-        forecast = validated_data.pop("forecast")
-        forecast_date = validated_data.pop("forecast_date")
+        date = validated_data.pop("date")
+        sales_units = validated_data.pop("sales_units")
+        # forecast_date = validated_data.pop("forecast_date")
         data = Forecast.objects.create(
             store=store,
-            forecast=forecast,
-            forecast_date=forecast_date,
+            date=date,
+            forecast_date=datetime.today().strftime("%Y-%m-%d"),
+            sales_units=sales_units,
             **validated_data
         )
         data.save()

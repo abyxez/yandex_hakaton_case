@@ -172,7 +172,7 @@ class Forecast(Model):
     store = ForeignKey(
         to=Store,
         on_delete=CASCADE,
-        related_name="forecasts",
+        related_name="forecast",
         verbose_name="магазин",
     )
     sku = ForeignKey(
@@ -193,7 +193,7 @@ class Forecast(Model):
         verbose_name_plural = "Прогноз продаж"
 
     def __str__(self):
-        return f"{self.date}:{self.sales_units}"
+        return f" {self.store} {self.sku} {self.date} {self.sales_units}"
 
 
 # class User(AbstractUser):
