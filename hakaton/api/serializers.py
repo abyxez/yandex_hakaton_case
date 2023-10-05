@@ -77,6 +77,7 @@ class SaleSerializer(serializers.ModelSerializer):
     store = StoreSerializer(read_only=True)
     sku = ProductSerializer(read_only=True)
     fact = SimpleSaleSerializer(read_only=True, source="*")
+ 
 
     class Meta:
         model = Sale
@@ -86,19 +87,20 @@ class SaleSerializer(serializers.ModelSerializer):
         return {
             "store": instance.store.hash_id,
             "sku": instance.sku.hash_id,
-            "fact": {
+            "fact": [{
                 "date": instance.date,
                 "sales_type": instance.sales_type,
                 "sales_units": instance.sales_units,
                 "sales_units_promo": instance.sales_units_promo,
                 "sales_rub": instance.sales_rub,
                 "sales_rub_promo": instance.sales_rub_promo,
-            },
+        }],
         }
 
 
 class CategorySerializer(serializers.ModelSerializer):
     """Сериализатор для категорий товаров."""
+    
 
     class Meta:
         model = Category
@@ -110,6 +112,15 @@ class CategorySerializer(serializers.ModelSerializer):
             "uom",
         )
 
+    def to_representation(self, instance):
+        return {
+            "sku": instance.sku.hash_id,
+            "group": instance.group,
+            "category": instance.category,
+            "subcategory": instance.subcategory,
+            "uom": instance.uom,
+        }
+
 
 class SimpleUnitsPostSerializer(serializers.ModelSerializer):
     """
@@ -120,17 +131,19 @@ class SimpleUnitsPostSerializer(serializers.ModelSerializer):
         model = Forecast
         fields = ("date", "sales_units")
 
+    
+
 
 class SimpleForecastPostSerializer(serializers.ModelSerializer):
     """
     Простой сериализатор товара для создания прогноза товара.
     """
 
-    sales_units = SimpleUnitsPostSerializer(many=True, read_only=True)
+    sales_units = SimpleUnitsPostSerializer(many=True)
     sku = serializers.StringRelatedField(read_only=True)
 
     class Meta:
-        model = Forecast
+        model = Category
         fields = ("sku", "sales_units")
 
 
@@ -148,8 +161,20 @@ class ForecastGetSerializer(serializers.ModelSerializer):
         model = Forecast
         fields = ("store", "sku", "forecast_date", "forecast")
 
-    def get_forecast_date(self):
+    def get_forecast_date(self, obj):
         return datetime.today().strftime("%Y-%m-%d")
+    
+    def to_representation(self, instance):
+        return {
+            "store": instance.store.hash_id,
+            "forecast_date": datetime.today().strftime("%Y-%m-%d"),
+            "forecast": {
+                    "sku": instance.sku.hash_id,
+                    "sales_units": {
+                        str(instance.date) : instance.sales_units
+                    },
+                },
+        }
 
 
 class ForecastPostSerializer(serializers.ModelSerializer):
@@ -162,21 +187,26 @@ class ForecastPostSerializer(serializers.ModelSerializer):
     forecast_date = serializers.SerializerMethodField()
 
     class Meta:
-        model = Forecast
+        model = Shop
         fields = ("store", "forecast_date", "forecast")
 
-    def get_forecast_date(self):
-        pass
+    def get_forecast_date(self, obj):
+        return datetime.today().strftime("%Y-%m-%d")
 
     def create(self, validated_data):
         """Создание прогноза."""
         store = validated_data.pop("store")
-        forecast = validated_data.pop("forecast")
-        forecast_date = validated_data.pop("forecast_date")
+        sku = validated_data.pop("sku")
+        date = validated_data.pop("date")
+        sales_units = validated_data.pop("sales_units")
+        data = SimpleUnitsPostSerializer()
+        # forecast_date = validated_data.pop("forecast_date")
         data = Forecast.objects.create(
+            sku=sku,
             store=store,
-            forecast=forecast,
-            forecast_date=forecast_date,
+            date=date,
+            forecast_date=datetime.today().strftime("%Y-%m-%d"),
+            sales_units=sales_units,
             **validated_data
         )
         data.save()
