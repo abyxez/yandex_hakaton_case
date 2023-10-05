@@ -139,11 +139,11 @@ class SimpleForecastPostSerializer(serializers.ModelSerializer):
     Простой сериализатор товара для создания прогноза товара.
     """
 
-    sales_units = SimpleUnitsPostSerializer(many=True, read_only=True)
+    sales_units = SimpleUnitsPostSerializer(many=True)
     sku = serializers.StringRelatedField(read_only=True)
 
     class Meta:
-        model = Forecast
+        model = Category
         fields = ("sku", "sales_units")
 
 
@@ -187,7 +187,7 @@ class ForecastPostSerializer(serializers.ModelSerializer):
     forecast_date = serializers.SerializerMethodField()
 
     class Meta:
-        model = Forecast
+        model = Shop
         fields = ("store", "forecast_date", "forecast")
 
     def get_forecast_date(self, obj):
@@ -196,10 +196,13 @@ class ForecastPostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создание прогноза."""
         store = validated_data.pop("store")
+        sku = validated_data.pop("sku")
         date = validated_data.pop("date")
         sales_units = validated_data.pop("sales_units")
+        data = SimpleUnitsPostSerializer()
         # forecast_date = validated_data.pop("forecast_date")
         data = Forecast.objects.create(
+            sku=sku,
             store=store,
             date=date,
             forecast_date=datetime.today().strftime("%Y-%m-%d"),

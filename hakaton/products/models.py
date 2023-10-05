@@ -31,6 +31,10 @@ class Product(Model):
         max_length=100,
     )
 
+    def __str__(self):
+        return self.hash_id
+
+
 
 class Store(Model):
     """
@@ -49,6 +53,9 @@ class Store(Model):
         unique=True,
         max_length=100,
     )
+
+    def __str__(self):
+        return self.hash_id
 
 
 class Shop(Model):
@@ -87,7 +94,10 @@ class Shop(Model):
         verbose_name_plural = "Магазины"
 
     def __str__(self):
-        return self.store
+        return (
+            f"{self.store} {self.city} {self.divizion} "
+            f"{self.format} {self.loc} {self.size} {self.is_active}"
+            )
 
 
 # class ProductShop(Model):
@@ -123,7 +133,10 @@ class Category(Model):
         verbose_name_plural = "Категории"
 
     def __str__(self):
-        return self.sku
+        return (
+            f"{self.sku} {self.group} {self.category} "
+            f"{self.subcategory} {self.uom}"
+            )
 
 
 class Sale(Model):
@@ -160,8 +173,8 @@ class Sale(Model):
 
     def __str__(self):
         return (
-            f"{self.date} {self.sales_type}"
-            f"{self.sales_units} {self.sales_units_promo}"
+            f"{self.date} {self.sales_type} "
+            f"{self.sales_units} {self.sales_units_promo} "
             f"{self.sales_rub} {self.sales_rub_promo}"
         )
 
@@ -193,7 +206,7 @@ class Forecast(Model):
         verbose_name_plural = "Прогноз продаж"
 
     def __str__(self):
-        return f" {self.store} {self.sku} {self.date} {self.sales_units}"
+        return f"{self.store} {self.sku} {self.date} {self.sales_units}"
 
 
 # class User(AbstractUser):

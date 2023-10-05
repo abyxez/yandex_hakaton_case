@@ -26,7 +26,7 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = LimitPageNumberPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = CategoryFilter
     search_fields = ("^sku",)
     permission_classes = (IsAdminOrReadOnlyPermission,)
@@ -35,7 +35,7 @@ class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,)
     search_fields = (
         "^store",
         "^sku",
@@ -48,7 +48,7 @@ class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Shop.objects.all()
     pagination_class = LimitPageNumberPagination
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend,)
     search_fields = (
         "^store",
     )
@@ -62,7 +62,12 @@ class ForecastViewSet(
 ):
     queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = ForecastFilter
+    search_fields = (
+        "^store",
+        "^sku",
+    )
     permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
