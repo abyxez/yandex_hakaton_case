@@ -8,7 +8,7 @@ router = routers.DefaultRouter()
 router.register(r"categories", CategoryViewSet, basename="categories")
 router.register(r"sales", SaleViewSet, basename="sales")
 router.register(r"shops", ShopsViewSet, basename="shops")
-router.register(r"forecast", ForecastViewSet, basename="forecasts")
+router.register(r"forecast", ForecastViewSet, basename="forecast")
 # router.register(r'download', )
 # router.register(r'users', UserViewSet, basename='users')
 
