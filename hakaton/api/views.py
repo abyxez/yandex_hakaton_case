@@ -62,19 +62,23 @@ class ForecastViewSet(
 ):
     queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = ForecastFilter
-    search_fields = (
-        "^store",
-        "^sku",
-    )
+    # filterset_class = ForecastFilter
     permission_classes = (AllowAny,)
 
+    def get_queryset(self):
+        queryset = self.queryset
+        store = self.request.query_params.get('store')
+        if store:
+            queryset = queryset.filter(store=store)
+        sku = self.request.query_params.get('sku')
+        if sku:
+            queryset = queryset.filter(sku=sku)
+        return queryset
+
     def get_serializer_class(self):
-        if self.action in ["list", "retrieve"]:
+        if self.request.method == 'GET':
             return ForecastGetSerializer
         return ForecastPostSerializer
-
 
     @action(
         methods=['GET'],
@@ -87,10 +91,4 @@ class ForecastViewSet(
         store = get_object_or_404(Shop, store=fact_store)
         data = Forecast.objects.filter(sku=sku, store=store)
         return ExcelResponse(data)
-    
-    
 
-# class UserViewSet(views.UserViewSet):
-#     serializer_class = UserListSerializer
-#     pagination_class = LimitPageNumberPagination
-#     permission_classes = (IsAuthenticated,)

@@ -209,47 +209,24 @@ class Forecast(Model):
         return f"{self.store} {self.sku} {self.date} {self.sales_units}"
 
 
-# class User(AbstractUser):
-#     """Модель пользователей"""
-#     username = models.CharField(
-#         verbose_name='Имя пользователя',
-#         validators=(validate_username,),
-#         max_length=150,
-#         unique=True,
-#         blank=False,
-#         null=False
-#     )
-#     email = models.EmailField(
-#         verbose_name='Email',
-#         max_length=254,
-#         unique=True,
-#         blank=False,
-#         null=False
-#     )
-#     password = models.CharField(
-#         verbose_name='Пароль',
-#         max_length=150,
-#         blank=False,
-#         null=False
-#     )
-
-#     first_name = models.CharField(
-#         verbose_name='Имя',
-#         max_length=150,
-#         blank=False,
-#         null=False
-#     )
-#     last_name = models.CharField(
-#         verbose_name='Фамилия',
-#         max_length=150,
-#         blank=False,
-#         null=False
-#     )
-
-#     class Meta:
-#         ordering = ('id',)
-#         verbose_name = 'Пользователь'
-#         verbose_name_plural = 'Пользователи'
-
-#     def __str__(self):
-#         return f'{self.username}, {self.email}'
+class Excel(Model):
+    """
+    Для вывода в эксель
+    """
+    store = ForeignKey(
+        to=Store,
+        on_delete=CASCADE,
+        verbose_name='Магазин',
+    )
+    category = CharField(verbose_name="Категория товара", max_length=200)
+    subcategory = CharField(verbose_name="Подкатегория товара", max_length=200)
+    sku = ForeignKey(
+        to=Product,
+        on_delete=CASCADE,
+        verbose_name='Товар',
+    )
+    week = DateField()
+    sales_units = FloatField(verbose_name="Число проданных товаров без признака промо")
+    target = IntegerField()
+    difference = IntegerField()
+    wape = FloatField()

@@ -94,6 +94,8 @@ class SaleSerializer(serializers.ModelSerializer):
                 "sales_units_promo": instance.sales_units_promo,
                 "sales_rub": instance.sales_rub,
                 "sales_rub_promo": instance.sales_rub_promo,
+                'forecast': instance.forecast,
+                'wape': instance.wape,
         }],
         }
 
@@ -129,9 +131,10 @@ class SimpleUnitsPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Forecast
-        fields = ("date", "sales_units")
+        fields = ("date", "sales_units")    
 
-    
+    def to_representation(self, instance):
+        return {f'{instance.date}': instance.sales_units}
 
 
 class SimpleForecastPostSerializer(serializers.ModelSerializer):
@@ -152,29 +155,30 @@ class ForecastGetSerializer(serializers.ModelSerializer):
     Cериализатор для просмотра прогноза товара.
     """
 
-    store = serializers.StringRelatedField(read_only=True)
-    sku = serializers.StringRelatedField(read_only=True)
-    forecast = SimpleUnitsPostSerializer(many=True, read_only=True)
+    store = StoreSerializer(read_only=True)
+    sku = ProductSerializer(read_only=True)
+    forecast = serializers.SerializerMethodField()
     forecast_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Forecast
         fields = ("store", "sku", "forecast_date", "forecast")
 
+    def get_forecast(self, obj):
+        forecast = Forecast.objects.all()
+        request = self.context.get('request')
+        if request:
+            sku = request.query_params.get('sku')
+            store = request.query_params.get('store')
+            if sku and store:
+                forecast = forecast.filter(store=store, sku=sku)
+                serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
+                return serializer.data
+        serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
+        return serializer.data
+
     def get_forecast_date(self, obj):
         return datetime.today().strftime("%Y-%m-%d")
-    
-    def to_representation(self, instance):
-        return {
-            "store": instance.store.hash_id,
-            "forecast_date": datetime.today().strftime("%Y-%m-%d"),
-            "forecast": {
-                    "sku": instance.sku.hash_id,
-                    "sales_units": {
-                        str(instance.date) : instance.sales_units
-                    },
-                },
-        }
 
 
 class ForecastPostSerializer(serializers.ModelSerializer):
