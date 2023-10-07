@@ -1,4 +1,5 @@
 import django_filters as filters
+
 from products.models import Category, Forecast, Sale, Shop
 
 

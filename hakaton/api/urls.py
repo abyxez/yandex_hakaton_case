@@ -1,6 +1,7 @@
-from api.views import CategoryViewSet, ForecastViewSet, SaleViewSet, ShopsViewSet
 from django.urls import include, path
 from rest_framework import routers
+
+from api.views import CategoryViewSet, ForecastViewSet, SaleViewSet, ShopsViewSet
 
 app_name = "api"
 
@@ -9,7 +10,6 @@ router.register(r"categories", CategoryViewSet, basename="categories")
 router.register(r"sales", SaleViewSet, basename="sales")
 router.register(r"shops", ShopsViewSet, basename="shops")
 router.register(r"forecast", ForecastViewSet, basename="forecast")
-# router.register(r'download', )
 # router.register(r'users', UserViewSet, basename='users')
 
 

@@ -10,8 +10,6 @@ from rest_framework import permissions
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls"), name="api"),
-    # path('auth/', include('djoser.urls.jwt')),
-    # path('auth/', include('djoser.urls')),
 ]
 
 schema_view = get_schema_view(
@@ -19,7 +17,6 @@ schema_view = get_schema_view(
         title="API",
         default_version="v1",
         description="Документация для приложения api проекта Hakaton",
-        # terms_of_service="URL страницы с пользовательским соглашением",
         contact=openapi.Contact(email="admin@kittygram.ru"),
         license=openapi.License(name="BSD License"),
     ),

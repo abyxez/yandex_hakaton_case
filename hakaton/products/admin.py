@@ -1,4 +1,5 @@
 from django.contrib.admin import ModelAdmin, register
+
 from products.models import Category, Forecast, Sale, Shop
 
 

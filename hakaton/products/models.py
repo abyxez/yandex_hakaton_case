@@ -35,7 +35,6 @@ class Product(Model):
         return self.hash_id
 
 
-
 class Store(Model):
     """
     Вспомогательная модель: из hash_id в id для магазинов.
@@ -97,7 +96,7 @@ class Shop(Model):
         return (
             f"{self.store} {self.city} {self.divizion} "
             f"{self.format} {self.loc} {self.size} {self.is_active}"
-            )
+        )
 
 
 # class ProductShop(Model):
@@ -134,9 +133,8 @@ class Category(Model):
 
     def __str__(self):
         return (
-            f"{self.sku} {self.group} {self.category} "
-            f"{self.subcategory} {self.uom}"
-            )
+            f"{self.sku} {self.group} {self.category} " f"{self.subcategory} {self.uom}"
+        )
 
 
 class Sale(Model):
@@ -212,20 +210,25 @@ class Excel(Model):
     """
     Для вывода в эксель
     """
+
     store = ForeignKey(
         to=Store,
         on_delete=CASCADE,
-        verbose_name='Магазин',
+        verbose_name="Магазин",
     )
     category = CharField(verbose_name="Категория товара", max_length=200)
     subcategory = CharField(verbose_name="Подкатегория товара", max_length=200)
     sku = ForeignKey(
         to=Product,
         on_delete=CASCADE,
-        verbose_name='Товар',
+        verbose_name="Товар",
     )
-    week = DateField()
-    sales_units = FloatField(verbose_name="Число проданных товаров без признака промо")
-    target = IntegerField()
-    difference = IntegerField()
-    wape = FloatField()
+    week = IntegerField()
+    sales_units = FloatField(
+        verbose_name="Число проданных товаров без признака промо",
+        null=True,
+        blank=False,
+    )
+    target = FloatField(null=True, blank=False)
+    difference = FloatField(null=True, blank=False)
+    wape = FloatField(null=True, blank=False)
