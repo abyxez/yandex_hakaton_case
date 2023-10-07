@@ -2,9 +2,10 @@
 # from rest_framework.validators import UniqueValidator
 # from products.validators import validate_username
 from datetime import datetime
-
+from pprint import pprint
 from products.models import Category, Forecast, Product, Sale, Shop, Store
 from rest_framework import serializers
+from django.db.models import F
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -52,10 +53,27 @@ class ShopSerializer(serializers.ModelSerializer):
         }
 
 
+class ForecastSaleSerializer(serializers.ModelSerializer):
+    """
+    Для forecast, wape в SimpleSaleSerializer
+    """
+    forecast = serializers.SerializerMethodField()
+    wape = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Forecast
+        fields = (
+            'forecast',
+            'wape',
+        )
+
+
 class SimpleSaleSerializer(serializers.ModelSerializer):
     """
     Простой Сериализатор  для продаж  для просмотра.
     """
+    forecast = serializers.SerializerMethodField()
+    # wape = serializers.SerializerMethodField()
 
     class Meta:
         model = Sale
@@ -66,7 +84,50 @@ class SimpleSaleSerializer(serializers.ModelSerializer):
             "sales_units_promo",
             "sales_rub",
             "sales_rub_promo",
+            'forecast',
+            'wape',
         )
+    
+    def get_forecast(self, obj):
+        request = self.context.get('request')
+        to_represent = []
+        if request:
+            dates = self.context.get('dates')
+            sku = request.query_params.get('sku')
+            store = request.query_params.get('store')
+            for date in dates:
+                if Forecast.objects.filter(sku=sku, store=store, date=date['date']).exists():
+                    to_represent.append(
+                        Forecast.objects.annotate(forecast_units=F('sales_units'), forecast_dates=F('date'))
+                        .filter(sku=sku, store=store, forecast_dates=date['date'])
+                        .values('forecast_units', 'forecast_dates')
+                    )
+        return to_represent
+
+    def to_representation(self, instance):
+        wape, forecast_unit = None, None
+        queryset = self.get_forecast(instance)
+        forecast_dict = {}
+
+        for item in queryset:
+            for _ in item:
+                forecast_dict[_['forecast_dates']]=[_['forecast_units']]
+
+        if instance.date in forecast_dict.keys():
+            forecast_unit = forecast_dict[instance.date]
+            if forecast_unit is not None:
+                wape = float(instance.sales_units / forecast_unit)
+
+        return {
+            'date': instance.date,
+            "sales_type": instance.sales_type,
+            "sales_units": instance.sales_units,
+            "sales_units_promo": instance.sales_units_promo,
+            "sales_rub": instance.sales_rub,
+            "sales_rub_promo": instance.sales_rub_promo,
+            'forecast': forecast_unit,
+            'wape': wape,
+        }
 
 
 class SaleSerializer(serializers.ModelSerializer):
@@ -74,30 +135,45 @@ class SaleSerializer(serializers.ModelSerializer):
     Сериализатор  для продаж .
     """
 
-    store = StoreSerializer(read_only=True)
-    sku = ProductSerializer(read_only=True)
-    fact = SimpleSaleSerializer(read_only=True, source="*")
+    store = serializers.StringRelatedField(read_only=True)
+    sku = serializers.StringRelatedField(read_only=True)
+    fact = serializers.SerializerMethodField()
  
 
     class Meta:
         model = Sale
-        fields = ("store", "sku", "fact")
+        fields = ("store", "sku", "fact" )
 
-    def to_representation(self, instance):
-        return {
-            "store": instance.store.hash_id,
-            "sku": instance.sku.hash_id,
-            "fact": [{
-                "date": instance.date,
-                "sales_type": instance.sales_type,
-                "sales_units": instance.sales_units,
-                "sales_units_promo": instance.sales_units_promo,
-                "sales_rub": instance.sales_rub,
-                "sales_rub_promo": instance.sales_rub_promo,
-                # 'forecast': instance.forecast,
-                # 'wape': instance.wape,
-        }],
-        }
+    def get_fact(self, obj):
+        sales = Sale.objects.all()
+        forecast = Forecast.objects.all()
+        request = self.context.get('request')
+        if request:
+            sku = request.query_params.get('sku')
+            store = request.query_params.get('store')
+            if sku and store:
+                sales = sales.filter(store=store, sku=sku)
+                dates = forecast.filter(store=store, sku=sku).values('date')
+                serializer = SimpleSaleSerializer(sales, many=True, read_only=True, context = {'request': request, 'dates': dates})
+                return serializer.data
+        serializer = SimpleSaleSerializer(sales, many=True, read_only=True)
+        return serializer.data
+
+    # def to_representation(self, instance):
+    #     return {
+    #         "store": instance.store.hash_id,
+    #         "sku": instance.sku.hash_id,
+    #         "fact": [{
+    #             "date": instance.date,
+    #             "sales_type": instance.sales_type,
+    #             "sales_units": instance.sales_units,
+    #             "sales_units_promo": instance.sales_units_promo,
+    #             "sales_rub": instance.sales_rub,
+    #             "sales_rub_promo": instance.sales_rub_promo,
+    #             # 'forecast': instance.forecast,
+    #             # 'wape': instance.wape,
+    #     }],
+    #     }
 
 
 class CategorySerializer(serializers.ModelSerializer):
