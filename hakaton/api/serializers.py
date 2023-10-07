@@ -213,17 +213,17 @@ class SimpleUnitsPostSerializer(serializers.ModelSerializer):
         return {f'{instance.date}': instance.sales_units}
 
 
-class SimpleForecastPostSerializer(serializers.ModelSerializer):
-    """
-    Простой сериализатор товара для создания прогноза товара.
-    """
+# class SimpleForecastPostSerializer(serializers.ModelSerializer):
+#     """
+#     Простой сериализатор товара для создания прогноза товара.
+#     """
 
-    sales_units = SimpleUnitsPostSerializer(many=True)
-    sku = serializers.StringRelatedField(read_only=True)
+#     sales_units = SimpleUnitsPostSerializer(many=True)
+#     sku = serializers.StringRelatedField(read_only=True)
 
-    class Meta:
-        model = Category
-        fields = ("sku", "sales_units")
+#     class Meta:
+#         model = Forecast
+#         fields = ("sku", "sales_units")
 
 
 class ForecastGetSerializer(serializers.ModelSerializer):
@@ -233,28 +233,27 @@ class ForecastGetSerializer(serializers.ModelSerializer):
 
     store = StoreSerializer(read_only=True)
     sku = ProductSerializer(read_only=True)
-    forecast = serializers.SerializerMethodField()
+    # forecast = serializers.SerializerMethodField()
+    # forecast = SimpleUnitsPostSerializer(read_only=True, source="*")
+    forecast = serializers.StringRelatedField(read_only=True)
     forecast_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Forecast
         fields = ("store", "sku", "forecast_date", "forecast")
 
-    def get_forecast(self, obj):
-        forecast = Forecast.objects.all()
-        request = self.context.get('request')
-        if request:
-            sku = request.query_params.get('sku')
-            store = request.query_params.get('store')
-            if sku and store:
-                forecast = forecast.filter(store=store, sku=sku)
-                serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
-                return serializer.data
-        serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
-        return serializer.data
 
-    def get_forecast_date(self, obj):
+    def get_forecast_date(self):
         return datetime.today().strftime("%Y-%m-%d")
+    
+    def to_representation(self, instance):
+        return {
+            "store": instance.store.hash_id,
+            "sku": instance.sku.hash_id,
+            "forecast_date": self.get_forecast_date(),
+            "forecast": {f'{instance.date}': instance.sales_units}
+        }
+    
 
 
 class ForecastPostSerializer(serializers.ModelSerializer):
@@ -262,13 +261,14 @@ class ForecastPostSerializer(serializers.ModelSerializer):
     Cериализатор для создания прогноза товара.
     """
 
-    store = serializers.StringRelatedField(read_only=True)
-    forecast = SimpleForecastPostSerializer(many=True)
+    store = serializers.PrimaryKeyRelatedField(queryset=Store.objects.all())
+    sku = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    forecast = SimpleUnitsPostSerializer()
     forecast_date = serializers.SerializerMethodField()
 
     class Meta:
-        model = Shop
-        fields = ("store", "forecast_date", "forecast")
+        model = Forecast
+        fields = ("store", "sku", "forecast_date", "forecast")
 
     def get_forecast_date(self, obj):
         return datetime.today().strftime("%Y-%m-%d")
@@ -277,17 +277,11 @@ class ForecastPostSerializer(serializers.ModelSerializer):
         """Создание прогноза."""
         store = validated_data.pop("store")
         sku = validated_data.pop("sku")
-        date = validated_data.pop("date")
-        sales_units = validated_data.pop("sales_units")
-        data = SimpleUnitsPostSerializer()
-        # forecast_date = validated_data.pop("forecast_date")
+        forecast_data = validated_data.pop("forecast")
         data = Forecast.objects.create(
             sku=sku,
             store=store,
-            date=date,
-            forecast_date=datetime.today().strftime("%Y-%m-%d"),
-            sales_units=sales_units,
-            **validated_data
+            **forecast_data
         )
         data.save()
         return data
