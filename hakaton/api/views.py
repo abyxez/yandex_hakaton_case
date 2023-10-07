@@ -5,6 +5,8 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.decorators import action
 from django.http import HttpResponse, StreamingHttpResponse
+from rest_framework.response import Response
+from rest_framework import permissions, status
 import pandas as pd
 import xlwt
 from excel_response import ExcelResponse
@@ -60,25 +62,26 @@ class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class ForecastViewSet(
     mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
 ):
-    queryset = Forecast.objects.all()
+    # queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
-    # filterset_class = ForecastFilter
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ForecastFilter
+    search_fields = (
+        "^store",
+        "^sku",
+    )
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        queryset = self.queryset
         store = self.request.query_params.get('store')
-        if store:
-            queryset = queryset.filter(store=store)
         sku = self.request.query_params.get('sku')
-        if sku:
-            queryset = queryset.filter(sku=sku)
-        return queryset
+        return Forecast.objects.filter(sku=sku, store=store)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ForecastGetSerializer
         return ForecastPostSerializer
+    
 
     @action(
         methods=['GET'],
