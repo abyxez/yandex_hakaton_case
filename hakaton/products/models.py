@@ -194,7 +194,6 @@ class Forecast(Model):
         related_name="forecast",
         verbose_name="товар",
     )
-    # forecast_date = DateField(verbose_name='Дата отчета')
     date = DateField(verbose_name="Дата прогноза продажи")
     sales_units = PositiveIntegerField(
         verbose_name="Прогнозируемый спрос в шт",
