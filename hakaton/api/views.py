@@ -47,6 +47,16 @@ class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     filterset_class = SaleFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
+    def get_queryset(self):
+        queryset = self.queryset
+        store = self.request.query_params.get('store')
+        if store:
+            queryset = queryset.filter(store=store)
+        sku = self.request.query_params.get('sku')
+        if sku:
+            queryset = queryset.filter(sku=sku)
+        return queryset
+
 
 class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Shop.objects.all()
