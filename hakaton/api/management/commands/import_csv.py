@@ -52,24 +52,24 @@ class Command(BaseCommand):
         #     ShoppingMall.objects.bulk_create(to_import)
         #     print(f"Список магазинов загружен.")
 
-        # csv_file2 = settings.BASE_DIR / "data" / "pr_df.csv"
-        # with open(csv_file2, "r", encoding="utf8") as f:
-        #     reader = csv.reader(f, delimiter=",")
-        #     next(reader, None)
-        #     to_import = []
-        #     for row in reader:
-        #         (pr_sku_id, pr_group_id, pr_cat_id, pr_subcat_id, pr_uom_id) = row
-        #         new_item = Category(
-        #             sku=Product.objects.get_or_create(hash_id=pr_sku_id)[0],
-        #             store=Store.objects.get_or_create(hash_id=0)[0],
-        #             group=Group.objects.get_or_create(hash_id=pr_group_id)[0],
-        #             category=Category.objects.get_or_create(hash_id=pr_cat_id)[0],
-        #             subcategory=Subcategory.objects.get_or_create(hash_id=pr_subcat_id)[0],
-        #             uom=pr_uom_id,
-        #         )
-        #         to_import.append(new_item)
-        #     ProductStore.objects.bulk_create(to_import)
-        #     print(f"Список магазинов, товаров и категорий загружен.")
+        csv_file2 = settings.BASE_DIR / "pr_df_updated.csv"
+        with open(csv_file2, "r", encoding="utf8") as f:
+            reader = csv.reader(f, delimiter=",")
+            next(reader, None)
+            to_import = []
+            for row in reader:
+                (st_id,pr_sku_id,pr_group_id,pr_cat_id,pr_subcat_id,pr_uom_id) = row
+                new_item = ProductStore(
+                    sku=Product.objects.get_or_create(hash_id=pr_sku_id)[0],
+                    store=Store.objects.get_or_create(hash_id=st_id)[0],
+                    group=Group.objects.get_or_create(hash_id=pr_group_id)[0],
+                    category=Category.objects.get_or_create(hash_id=pr_cat_id)[0],
+                    subcategory=Subcategory.objects.get_or_create(hash_id=pr_subcat_id)[0],
+                    uom=pr_uom_id,
+                )
+                to_import.append(new_item)
+            ProductStore.objects.bulk_create(to_import)
+            print(f"Список магазинов, товаров и категорий загружен.")
 
         # csv_file3 = settings.BASE_DIR / "data" / "sales_df_train.csv"
         # with open(csv_file3, "r", encoding="utf8") as f:
@@ -101,19 +101,19 @@ class Command(BaseCommand):
         #     Sale.objects.bulk_create(to_import)
         #     print(f"Статистика продаж загружена.")
 
-        csv_file4 = settings.BASE_DIR / "data" / "sales_submission.csv"
-        with open(csv_file4, "r", encoding="utf8") as f:
-            reader = csv.reader(f, delimiter=",")
-            next(reader, None)
-            to_import = []
-            for row in reader:
-                (st_id, pr_sku_id, date, target) = row
-                new_item = Forecast(
-                    store=Store.objects.filter(hash_id=st_id)[0],
-                    sku=Product.objects.filter(hash_id=pr_sku_id)[0],
-                    date=date,
-                    sales_units=target,
-                )
-                to_import.append(new_item)
-            Forecast.objects.bulk_create(to_import)
-            print(f"Прогноз продаж загружен.")
+        # csv_file4 = settings.BASE_DIR / "data" / "sales_submission.csv"
+        # with open(csv_file4, "r", encoding="utf8") as f:
+        #     reader = csv.reader(f, delimiter=",")
+        #     next(reader, None)
+        #     to_import = []
+        #     for row in reader:
+        #         (st_id, pr_sku_id, date, target) = row
+        #         new_item = Forecast(
+        #             store=Store.objects.filter(hash_id=st_id)[0],
+        #             sku=Product.objects.filter(hash_id=pr_sku_id)[0],
+        #             date=date,
+        #             sales_units=target,
+        #         )
+        #         to_import.append(new_item)
+        #     Forecast.objects.bulk_create(to_import)
+        #     print(f"Прогноз продаж загружен.")

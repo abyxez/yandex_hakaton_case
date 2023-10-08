@@ -22,6 +22,7 @@ from products.models import (
     Size,
     Store,
     Subcategory,
+    Group,
 )
 
 
@@ -203,31 +204,6 @@ class SaleSerializer(serializers.ModelSerializer):
     #     }
 
 
-class ProductStoreSerializer(serializers.ModelSerializer):
-    """Сериализатор для категорий товаров."""
-
-    class Meta:
-        model = ProductStore
-        fields = (
-            'store',
-            "sku",
-            "group",
-            "category",
-            "subcategory",
-            "uom",
-        )
-
-    def to_representation(self, instance):
-        return {
-            'store': instance.store.hash_id,
-            "sku": instance.sku.hash_id,
-            "group": instance.group,
-            "category": instance.category,
-            "subcategory": instance.subcategory,
-            "uom": instance.uom,
-        }
-
-
 class SimpleUnitsPostSerializer(serializers.ModelSerializer):
     """
     Простой сериализатор количества для создания прогноза товара.
@@ -239,6 +215,101 @@ class SimpleUnitsPostSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {f"{instance.date}": instance.sales_units}
+
+
+class ProductStoreSerializer(serializers.ModelSerializer):
+    """Сериализатор для категорий товаров."""
+    group = serializers.StringRelatedField()
+    category = serializers.StringRelatedField()
+    subcategory = serializers.StringRelatedField()
+    store = serializers.StringRelatedField()
+    sku = serializers.StringRelatedField()
+    forecast = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductStore
+        fields = (
+            'store',
+            "sku",
+            "group",
+            "category",
+            "subcategory",
+            "uom",
+            "forecast",
+        )
+
+    # def to_representation(self, instance):
+    #     return {
+    #         'store': instance.store.hash_id,
+    #         "sku": instance.sku.hash_id,
+    #         "group": instance.group,
+    #         "category": instance.category,
+    #         "subcategory": instance.subcategory,
+    #         "uom": instance.uom,
+    #     }
+
+    def get_group(self, obj):
+        queryset = ProductStore.objects.all()
+        request = self.context.get('request')
+        if request:
+            sku = request.query_params.get("sku")
+            store = request.query_params.get("store")
+            if sku:
+                queryset = queryset.filter(sku=sku)
+                if store:
+                    queryset = queryset.filter(store=store)
+                    group = queryset.values('group')
+                    return group
+        else:
+            return None
+        return queryset
+
+    def get_category(self, obj):
+        queryset = ProductStore.objects.all()
+        request = self.context.get('request')
+        if request:
+            sku = request.query_params.get("sku")
+            store = request.query_params.get("store")
+            if sku:
+                queryset = queryset.filter(sku=sku)
+                if store:
+                    queryset = queryset.filter(store=store)
+                    group = queryset.values('category')
+                    return group
+        else:
+            return None
+        return queryset
+
+    def get_subcategory(self, obj):
+        queryset = ProductStore.objects.all()
+        request = self.context.get('request')
+        if request:
+            sku = request.query_params.get("sku")
+            store = request.query_params.get("store")
+            if sku:
+                queryset = queryset.filter(sku=sku)
+                if store:
+                    queryset = queryset.filter(store=store)
+                    group = queryset.filter(sku=sku).values('subcategory')
+                    return group
+        else:
+            return None
+        return queryset
+
+    def get_forecast(self, obj):
+        forecast = Forecast.objects.all()
+        request = self.context.get("request")
+        if request:
+            sku = request.query_params.get("sku")
+            store = request.query_params.get("store")
+            if sku:
+                forecast = forecast.filter(sku=sku)
+                if store:
+                    forecast = forecast.filter(store=store)
+        serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
+        return serializer.data
+
+
 
 
 # class SimpleForecastPostSerializer(serializers.ModelSerializer):
