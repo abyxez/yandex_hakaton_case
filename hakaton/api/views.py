@@ -10,26 +10,41 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from products.models import Category, Forecast, Product, Sale, Shop, Store
+from products.models import (
+    Category,
+    City,
+    Division,
+    Excel,
+    Forecast,
+    Format,
+    Location,
+    ProductStore,
+    Sale,
+    ShoppingMall,
+    Size,
+    Store,
+    Subcategory,
+)
 
 from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnlyPermission
 from .serializers import (
-    CategorySerializer,
     ForecastGetSerializer,
     ForecastPostSerializer,
+    ProductStoreSerializer,
+    SaleForecastGetSerializer,
     SaleSerializer,
-    ShopSerializer,
+    ShoppingMallSerializer,
 )
 
 
-class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class ProductStoreViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = ProductStore.objects.all()
+    serializer_class = ProductStoreSerializer
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = CategoryFilter
+    # filterset_class = CategoryFilter
     search_fields = ("^sku",)
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
@@ -43,7 +58,7 @@ class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         "^sku",
     )
     pagination_class = LimitPageNumberPagination
-    filterset_class = SaleFilter
+    # filterset_class = SaleFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
     def get_queryset(self):
@@ -58,12 +73,12 @@ class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = Shop.objects.all()
+    queryset = ShoppingMall.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
     search_fields = ("^store",)
-    serializer_class = ShopSerializer
-    filterset_class = ShopFilter
+    serializer_class = ShoppingMallSerializer
+    # filterset_class = ShopFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
@@ -73,7 +88,7 @@ class ForecastViewSet(
     queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = ForecastFilter
+    # filterset_class = ForecastFilter
     search_fields = (
         "^store",
         "^sku",
@@ -103,6 +118,41 @@ class ForecastViewSet(
     )
     def download_forecast_list(fact_sku, fact_store):
         sku = get_object_or_404(Category, sku=fact_sku)
-        store = get_object_or_404(Shop, store=fact_store)
+        store = get_object_or_404(ShoppingMall, store=fact_store)
         data = Forecast.objects.filter(sku=sku, store=store)
         return ExcelResponse(data)
+
+
+class StatisticSaleForecastViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Excel.objects.all()
+    pagination_class = LimitPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    # filterset_class = SaleForecastFilter
+    search_fields = (
+        "^store",
+        "^sku",
+    )
+    permission_classes = (AllowAny,)
+    serializer_class = SaleForecastGetSerializer
+
+
+class StatisticViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = ProductStore.objects.all()
+    serializer_class = ProductStoreSerializer
+    pagination_class = LimitPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    # filterset_class = CategoryFilter
+    # search_fields = ("^sku",)
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        queryset = self.queryset
+        store = self.request.query_params.get("store")
+        if store:
+            queryset = queryset.filter(store=store)
+
+        sku = self.request.query_params.get("sku")
+        if sku:
+            queryset = queryset.filter(sku=sku)
+
+        return queryset

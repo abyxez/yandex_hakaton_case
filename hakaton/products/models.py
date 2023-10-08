@@ -16,7 +16,7 @@ from django.db.models import (
 
 class Product(Model):
     """
-    Вспомогательная модель: из hash_id в id для товаров.
+    Модель товара.
     """
 
     name = CharField(
@@ -37,7 +37,7 @@ class Product(Model):
 
 class Store(Model):
     """
-    Вспомогательная модель: из hash_id в id для магазинов.
+    Модель магазина.
     """
 
     name = CharField(
@@ -57,8 +57,163 @@ class Store(Model):
         return self.hash_id
 
 
-class Shop(Model):
-    """Модель магазинов"""
+class Category(Model):
+    """
+    Модель категорий.
+    """
+
+    name = CharField(
+        "Название категории",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    hash_id = CharField(
+        "Хэшированный ID",
+        unique=True,
+        max_length=100,
+    )
+
+    def __str__(self):
+        return self.hash_id
+
+
+class Subcategory(Model):
+    """
+    Модель подкатегорий.
+    """
+
+    name = CharField(
+        "Название подкатегории",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    hash_id = CharField(
+        "Хэшированный ID",
+        unique=True,
+        max_length=100,
+    )
+
+    def __str__(self):
+        return self.hash_id
+
+
+class Group(Model):
+    """
+    Модель групп.
+    """
+
+    name = CharField(
+        "Название группы",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    hash_id = CharField(
+        "Хэшированный ID",
+        unique=True,
+        max_length=100,
+    )
+
+    def __str__(self):
+        return self.hash_id
+
+
+class City(Model):
+    """
+    Модель города.
+    """
+
+    name = CharField(
+        "Название города",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    hash_id = CharField(
+        "Хэшированный ID",
+        unique=True,
+        max_length=100,
+    )
+
+    def __str__(self):
+        return self.hash_id
+
+
+class Division(Model):
+    """
+    Модель дивизиона.
+    """
+
+    name = CharField(
+        "Название дивизиона",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+    )
+    hash_id = CharField(
+        "Хэшированный ID",
+        unique=True,
+        max_length=100,
+    )
+
+    def __str__(self):
+        return self.hash_id
+
+
+class Format(Model):
+    """
+    Модель формата.
+    """
+
+    name = CharField(
+        "Название формата",
+        max_length=200,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Location(Model):
+    """
+    Модель локации.
+    """
+
+    name = CharField(
+        "Название локации",
+        max_length=200,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Size(Model):
+    """
+    Модель размера магазина.
+    """
+
+    name = CharField(
+        "Размерная характеристика",
+        max_length=200,
+        unique=True,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class ShoppingMall(Model):
+    """Модель торгового центра."""
 
     store = ForeignKey(
         verbose_name="Магазин",
@@ -66,22 +221,39 @@ class Shop(Model):
         related_name="shops",
         on_delete=CASCADE,
     )
-    city = CharField(
-        "Город",
+    city = ForeignKey(
+        to=City,
+        verbose_name="Город",
+        related_name="shops",
         max_length=200,
+        on_delete=CASCADE,
     )
-    divizion = CharField(
-        "Дивизион",
+    division = ForeignKey(
+        to=Division,
+        verbose_name="Дивизион",
+        related_name="shops",
         max_length=200,
+        on_delete=CASCADE,
     )
-    format = IntegerField(
-        verbose_name="Формат магазина",
+    format = ForeignKey(
+        to=Format,
+        verbose_name="Формат",
+        related_name="shops",
+        max_length=200,
+        on_delete=CASCADE,
     )
-    loc = IntegerField(
-        verbose_name="Локация магазина",
+    location = ForeignKey(
+        to=Location,
+        verbose_name="Локация",
+        max_length=200,
+        on_delete=CASCADE,
     )
-    size = IntegerField(
-        verbose_name="Тип размера магазина",
+    size = ForeignKey(
+        to=Size,
+        verbose_name="Размер",
+        related_name="shops",
+        max_length=200,
+        on_delete=CASCADE,
     )
     is_active = IntegerField(
         verbose_name="Флаг активного магазина",
@@ -94,37 +266,49 @@ class Shop(Model):
 
     def __str__(self):
         return (
-            f"{self.store} {self.city} {self.divizion} "
-            f"{self.format} {self.loc} {self.size} {self.is_active}"
+            f"{self.store} {self.city} {self.division} "
+            f"{self.format} {self.location} {self.size} {self.is_active}"
         )
 
 
-# class ProductShop(Model):
-#     store = ForeignKey(
-#         to=Shop,
-#         on_delete=CASCADE,
-#         verbose_name=''
-#     )
-#     product = ForeignKey(
-#         to=Product,
-#         on_delete=CASCADE,
-#         verbose_name=''
-#     )
+class ProductStore(Model):
+    """Модель категорий и товаров в магазине."""
 
-
-class Category(Model):
-    """Модель категорий"""
-
+    store = ForeignKey(
+        to=Store,
+        on_delete=CASCADE,
+        related_name="product_store",
+        verbose_name="Торговый центр",
+    )
     sku = ForeignKey(
         to=Product,
-        verbose_name="Наименование товара ",
+        verbose_name="Наименование товара",
         max_length=200,
+        related_name="product_store",
         on_delete=CASCADE,
     )
-    group = CharField(verbose_name="Группа товара ", max_length=200)
-    category = CharField(verbose_name="Категория товара", max_length=200)
-    subcategory = CharField(verbose_name="Подкатегория товара", max_length=200)
-    uom = IntegerField(verbose_name="Маркер товара -на вес или шт")
+    group = ForeignKey(
+        to=Group,
+        verbose_name="Товарная группа",
+        max_length=200,
+        related_name="product_store",
+        on_delete=CASCADE,
+    )
+    category = ForeignKey(
+        to=Category,
+        verbose_name="Категория",
+        max_length=200,
+        related_name="product_store",
+        on_delete=CASCADE,
+    )
+    subcategory = ForeignKey(
+        to=Subcategory,
+        verbose_name="Подкатегория",
+        max_length=200,
+        related_name="product_store",
+        on_delete=CASCADE,
+    )
+    uom = IntegerField(verbose_name="Маркер развесовки: в Кг или Шт")
 
     class Meta:
         ordering = ("id",)
@@ -214,15 +398,38 @@ class Excel(Model):
     store = ForeignKey(
         to=Store,
         on_delete=CASCADE,
-        verbose_name="Магазин",
+        related_name="excel",
+        verbose_name="Торговый центр",
     )
-    category = CharField(verbose_name="Категория товара", max_length=200)
-    subcategory = CharField(verbose_name="Подкатегория товара", max_length=200)
     sku = ForeignKey(
         to=Product,
+        verbose_name="Наименование товара",
+        max_length=200,
+        related_name="excel",
         on_delete=CASCADE,
-        verbose_name="Товар",
     )
+    group = ForeignKey(
+        to=Group,
+        verbose_name="Товарная группа",
+        max_length=200,
+        related_name="excel",
+        on_delete=CASCADE,
+    )
+    category = ForeignKey(
+        to=Category,
+        verbose_name="Категория",
+        max_length=200,
+        related_name="excel",
+        on_delete=CASCADE,
+    )
+    subcategory = ForeignKey(
+        to=Subcategory,
+        verbose_name="Подкатегория",
+        max_length=200,
+        related_name="excel",
+        on_delete=CASCADE,
+    )
+    uom = IntegerField(verbose_name="Маркер развесовки: в Кг или Шт")
     week = IntegerField()
     sales_units = FloatField(
         verbose_name="Число проданных товаров без признака промо",

@@ -7,7 +7,22 @@ from pprint import pprint
 from django.db.models import F
 from rest_framework import serializers
 
-from products.models import Category, Forecast, Product, Sale, Shop, Store
+from products.models import (
+    Category,
+    City,
+    Division,
+    Excel,
+    Forecast,
+    Format,
+    Location,
+    Product,
+    ProductStore,
+    Sale,
+    ShoppingMall,
+    Size,
+    Store,
+    Subcategory,
+)
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -28,17 +43,17 @@ class StoreSerializer(serializers.ModelSerializer):
         )
 
 
-class ShopSerializer(serializers.ModelSerializer):
+class ShoppingMallSerializer(serializers.ModelSerializer):
     """Сериализатор для магазинов."""
 
     class Meta:
-        model = Shop
+        model = ShoppingMall
         fields = (
             "store",
             "city",
-            "divizion",
+            "division",
             "format",
-            "loc",
+            "location",
             "size",
             "is_active",
         )
@@ -47,9 +62,9 @@ class ShopSerializer(serializers.ModelSerializer):
         return {
             "store": instance.store.hash_id,
             "city": instance.city,
-            "divizion": instance.divizion,
+            "division": instance.division,
             "format": instance.format,
-            "loc": instance.loc,
+            "location": instance.location,
             "size": instance.size,
             "is_active": instance.is_active,
         }
@@ -188,12 +203,13 @@ class SaleSerializer(serializers.ModelSerializer):
     #     }
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class ProductStoreSerializer(serializers.ModelSerializer):
     """Сериализатор для категорий товаров."""
 
     class Meta:
-        model = Category
+        model = ProductStore
         fields = (
+            'store',
             "sku",
             "group",
             "category",
@@ -203,6 +219,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return {
+            'store': instance.store.hash_id,
             "sku": instance.sku.hash_id,
             "group": instance.group,
             "category": instance.category,
@@ -344,3 +361,104 @@ class ForecastPostSerializer(serializers.ModelSerializer):
 #             'id', 'email', 'username', 'first_name',
 #             'last_name', 'password'
 #         )
+
+
+class ProductStoreForecastSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для категорий товаров и
+    прогнозам продаж по датам.
+    """
+
+    store = serializers.SerializerMethodField()
+    sku = serializers.StringRelatedField()
+    forecast = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductStore
+        fields = (
+            "store",
+            "group",
+            "category",
+            "subcategory",
+            "sku",
+            "uom",
+            "forecast",
+        )
+
+    def get_forecast(self, obj):
+        forecast = Forecast.objects.all()
+        request = self.context.get("request")
+        if request:
+            sku = request.query_params.get("sku")
+            store = request.query_params.get("store")
+            if sku and store:
+                forecast = forecast.filter(store=store, sku=sku)
+                serializer = SimpleUnitsPostSerializer(
+                    forecast, many=True, read_only=True
+                )
+                return serializer.data
+        serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
+        return serializer.data
+
+    def get_store(self, obj):
+        stores = Store.objects.all()
+        request = self.context.get("request")
+        if request:
+            store = request.query_params.get("store")
+            if store:
+                shop = stores.filter(id=store)[0]
+                serializer = StoreSerializer(shop, read_only=True)
+                return serializer.data["hash_id"]
+            else:
+                return None
+        serializer = StoreSerializer(stores, many=True, read_only=True)
+        return serializer.data
+
+    # def to_representation(self, instance):
+    #     return {
+    #         "store": instance.store.hash_id,
+    #         "sku": instance.sku.hash_id,
+    #         "group": instance.group,
+    #         "forecast": {f"{instance.date}": instance.sales_units},
+    #     }
+
+
+class SaleForecastGetSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для категорий товаров и
+    прогнозам продаж по датам.
+    """
+
+    store = serializers.StringRelatedField(read_only=True)
+    sku = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Excel
+        fields = (
+            "store",
+            "category",
+            "subcategory",
+            "sku",
+            "uom",
+            "week",
+            "sales_units",
+            "target",
+            "difference",
+            "wape",
+            "group",
+        )
+
+        def to_representation(self, instance):
+            return {
+                "store": instance.store.hash_id,
+                "group": instance.group,
+                "category": instance.category,
+                "subcategory": instance.subcategory,
+                "sku": instance.sku.hash_id,
+                "uom": instance.uom,
+                "week": instance.week,
+                "sales_units": instance.sales_units,
+                "target": instance.target,
+                "difference": instance.difference,
+                "wape": instance.wape,
+            }
