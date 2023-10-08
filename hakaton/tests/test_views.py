@@ -21,7 +21,7 @@ class ProductModelTest(TestCase):
             sku_id=cls.sku.id,
             group='test-group',
             category='test-category',
-            subcategory='test-category',
+            subcategory='test-subcategory',
             uom='1'
         )
         cls.store = Store.objects.create(
@@ -79,6 +79,12 @@ class ProductModelTest(TestCase):
 
     def test_forecasts_list(self):
         """Контекст - список продаж."""
-        response = self.guest_client.get(reverse('api:forecasts-list'))
+        response = self.guest_client.get(reverse('api:forecast-list'))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+    def test_users_list(self):
+        """Контекст - список пользователей."""
+        response = self.guest_client.get(reverse('api:users-list'))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.data['results']), 1)

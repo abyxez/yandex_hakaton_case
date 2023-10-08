@@ -20,7 +20,7 @@ class ProductURLTests(TestCase):
             sku_id=cls.sku.id,
             group='test-group',
             category='test-category',
-            subcategory='test-category',
+            subcategory='test-subcategory',
             uom='1'
         )
         cls.store = Store.objects.create(
@@ -66,6 +66,7 @@ class ProductURLTests(TestCase):
             '/api/shops/': HTTPStatus.OK,
             '/api/sales/': HTTPStatus.OK,
             '/api/forecast/': HTTPStatus.OK,
+            '/api/users/': HTTPStatus.OK,
             '/api/unexisting_page/': HTTPStatus.NOT_FOUND,
             # '/categories/unexisting_category/': HTTPStatus.NOT_FOUND,
         }

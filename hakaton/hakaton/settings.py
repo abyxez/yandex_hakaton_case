@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django_filters",
     "api",
     "products",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -152,41 +153,42 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        'rest_framework.authentication.TokenAuthentication',
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
 
-SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("JWT",),
-}
-
-# DJOSER = {
-#     'LOGIN_FIELD': 'email',
-#     'HIDE_USERS': False,
-#     'SERIALIZERS': {
-#         'user_create': 'api.serializers.UserCreateSerializer',
-#         'user': 'api.serializers.UserListSerializer',
-#         'current_user': 'api.serializers.UserListSerializer',
-#     },
-#     'PERMISSIONS': {
-#         'set_password': ('djoser.permissions.CurrentUserOrAdmin',),
-#         'user': ('rest_framework.permissions.IsAuthenticated',),
-#         'user_list': ('rest_framework.permissions.AllowAny',),
-#         'user_create': ('rest_framework.permissions.AllowAny',),
-#         'user_delete': ('rest_framework.permissions.IsAdminUser',),
-#         'token_create': ('rest_framework.permissions.AllowAny',),
-#         'token_destroy': ('rest_framework.permissions.IsAuthenticated',),
-#     },
+# SIMPLE_JWT = {
+#     "AUTH_HEADER_TYPES": ("JWT",),
 # }
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user_create': 'api.serializers.UserCreateSerializer',
+        'user': 'api.serializers.UserListSerializer',
+        'current_user': 'api.serializers.UserListSerializer',
+    },
+    'PERMISSIONS': {
+        'set_password': ('djoser.permissions.CurrentUserOrAdmin',),
+        'user': ('rest_framework.permissions.IsAuthenticated',),
+        'user_list': ('rest_framework.permissions.AllowAny',),
+        'user_create': ('rest_framework.permissions.AllowAny',),
+        'user_delete': ('rest_framework.permissions.IsAdminUser',),
+        'token_create': ('rest_framework.permissions.AllowAny',),
+        'token_destroy': ('rest_framework.permissions.IsAuthenticated',),
+    },
+}
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {

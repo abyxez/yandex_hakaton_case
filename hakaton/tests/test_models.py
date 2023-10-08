@@ -19,7 +19,7 @@ class ProductModelTest(TestCase):
             sku_id=cls.sku.id,
             group='test-group',
             category='test-category',
-            subcategory='test-category',
+            subcategory='test-subcategory',
             uom='1'
         )
         cls.store = Store.objects.create(

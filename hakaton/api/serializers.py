@@ -1,9 +1,10 @@
-# from djoser.serializers import UserCreateSerializer, UserSerializer
-# from rest_framework.validators import UniqueValidator
-# from products.validators import validate_username
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework.validators import UniqueValidator
+from products.validators import validate_username
 from datetime import datetime
 
 from products.models import Category, Forecast, Product, Sale, Shop, Store
+from users.models import User
 from rest_framework import serializers
 
 
@@ -166,10 +167,9 @@ class ForecastGetSerializer(serializers.ModelSerializer):
         model = Forecast
         fields = ("store", "sku", "forecast_date", "forecast")
 
-
     def get_forecast_date(self):
         return datetime.today().strftime("%Y-%m-%d")
-    
+
     def to_representation(self, instance):
         return {
             "store": instance.store.hash_id,
@@ -177,7 +177,6 @@ class ForecastGetSerializer(serializers.ModelSerializer):
             "forecast_date": self.get_forecast_date(),
             "forecast": {f'{instance.date}': instance.sales_units}
         }
-    
 
 
 class ForecastPostSerializer(serializers.ModelSerializer):
@@ -210,39 +209,39 @@ class ForecastPostSerializer(serializers.ModelSerializer):
         data.save()
         return data
 
-    def update(self, instance, validated_data):
-        """Обновление прогноза."""
-        Forecast.objects.filter(data=instance).delete()
-        return super().update(instance, validated_data)
+    # def update(self, instance, validated_data):
+    #     """Обновление прогноза."""
+    #     Forecast.objects.filter(data=instance).delete()
+    #     return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         request = self.context.get("request")
         return ForecastGetSerializer(instance, context={"request": request}).data
 
 
-# class UserListSerializer(UserSerializer):
-#     """Сериализатор для списка пользователей."""
+class UserListSerializer(UserSerializer):
+    """Сериализатор для списка пользователей."""
 
-#     class Meta:
-#         model = User
-#         fields = ('email', 'id', 'username',
-#                   'first_name', 'last_name',
-#                   )
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email',
+                  'first_name', 'last_name', 'job_title',
+                  )
 
 
-# class UserCreateSerializer(UserCreateSerializer):
-#     """Сериализатор для создания пользователей."""
-#     username = serializers.CharField(
-#         validators=[UniqueValidator(queryset=User.objects.all()),
-#                     validate_username]
-#     )
-#     email = serializers.EmailField(
-#         validators=[UniqueValidator(queryset=User.objects.all())]
-#     )
+class UserCreateSerializer(UserCreateSerializer):
+    """Сериализатор для создания пользователей."""
+    username = serializers.CharField(
+        validators=[UniqueValidator(queryset=User.objects.all()),
+                    validate_username]
+    )
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
 
-#     class Meta:
-#         model = User
-#         fields = (
-#             'id', 'email', 'username', 'first_name',
-#             'last_name', 'password'
-#         )
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'email', 'password',
+            'first_name', 'last_name', 'job_title'
+        )

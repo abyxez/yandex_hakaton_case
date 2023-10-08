@@ -1,4 +1,4 @@
-from api.views import CategoryViewSet, ForecastViewSet, SaleViewSet, ShopsViewSet
+from api.views import CategoryViewSet, ForecastViewSet, SaleViewSet, ShopsViewSet, UserViewSet
 from django.urls import include, path
 from rest_framework import routers
 
@@ -10,7 +10,7 @@ router.register(r"sales", SaleViewSet, basename="sales")
 router.register(r"shops", ShopsViewSet, basename="shops")
 router.register(r"forecast", ForecastViewSet, basename="forecast")
 # router.register(r'download', )
-# router.register(r'users', UserViewSet, basename='users')
+router.register(r'users', UserViewSet, basename='users')
 
 
 urlpatterns = [
