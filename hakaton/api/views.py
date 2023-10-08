@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from products.models import Category, Forecast, Sale, Shop, Product, Store
+from products.models import Category, Forecast, Sale, Shop, Product, Store, Excel
 from users.models import User
 from rest_framework import mixins, viewsets, filters
 from rest_framework.generics import GenericAPIView, ListAPIView
@@ -14,7 +14,7 @@ from rest_framework.decorators import action
 from excel_response import ExcelResponse
 from django.shortcuts import get_object_or_404
 
-from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter
+from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter, SaleForecastFilter
 from .pagination import LimitPageNumberPagination
 from .permissions import IsAdminOrReadOnlyPermission
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
@@ -22,7 +22,7 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 
 from .serializers import (CategorySerializer, ForecastGetSerializer,
                           ForecastPostSerializer, SaleSerializer,
-                          ShopSerializer, UserListSerializer)
+                          ShopSerializer, UserListSerializer, SaleForecastGetSerializer)
 
 
 class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -103,6 +103,38 @@ class ForecastViewSet(
         sku = get_object_or_404(Category, sku=fact_sku)
         store = get_object_or_404(Shop, store=fact_store)
         data = Forecast.objects.filter(sku=sku, store=store)
+        return ExcelResponse(data)
+    
+class Statistic2ViewSet(
+    mixins.ListModelMixin, viewsets.GenericViewSet
+):
+    queryset = Excel.objects.all()
+    pagination_class = LimitPageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = SaleForecastFilter
+    search_fields = (
+        "^store",
+        "^sku",
+    )
+    permission_classes = (IsAdminOrReadOnlyPermission,)
+    serializer_class = SaleForecastGetSerializer
+
+    # def get_queryset(self):
+    #     store = self.request.query_params.get('store')
+    #     sku = self.request.query_params.get('sku')
+    #     return Forecast.objects.filter(sku=sku, store=store)
+
+
+    @action(
+        methods=['GET'],
+        detail=False,
+        url_path='statistic_2',
+        permission_classes=(IsAuthenticatedOrReadOnly,),
+    )
+    def statistic_2(fact_sku, fact_store):
+        sku = get_object_or_404(Category, sku=fact_sku)
+        store = get_object_or_404(Shop, store=fact_store)
+        data = Excel.objects.filter(sku=sku, store=store)
         return ExcelResponse(data)
     
 

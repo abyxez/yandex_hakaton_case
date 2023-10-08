@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 from products.validators import validate_username
 from datetime import datetime
 from pprint import pprint
-from products.models import Category, Forecast, Product, Sale, Shop, Store
+from products.models import Category, Forecast, Product, Sale, Shop, Store, Excel
 from users.models import User
 from rest_framework import serializers
 from django.db.models import F
@@ -293,6 +293,10 @@ class ForecastPostSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get("request")
         return ForecastGetSerializer(instance, context={"request": request}).data
+    
+
+
+
 
 
 class UserListSerializer(UserSerializer):

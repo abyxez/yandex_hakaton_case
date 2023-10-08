@@ -1,5 +1,5 @@
 import django_filters as filters
-from products.models import Category, Forecast, Sale, Shop
+from products.models import Category, Forecast, Sale, Shop, Excel
 
 
 class SaleFilter(filters.FilterSet):
@@ -51,3 +51,17 @@ class ForecastFilter(filters.FilterSet):
             "store",
             "sku",
         )
+
+class SaleForecastFilter(filters.FilterSet):
+    """Фильтр для прогноза товара"""
+
+    class Meta:
+        model = Excel
+        fields = (
+            "store",
+            "sku",
+            "group",
+            "category",
+            "subcategory",
+        )
+
