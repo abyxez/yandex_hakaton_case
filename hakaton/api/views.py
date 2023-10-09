@@ -7,9 +7,11 @@ from excel_response import ExcelResponse
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly,IsAuthenticated
 from rest_framework.response import Response
+from djoser import views
 
+from users.models import User
 from products.models import (
     Category,
     City,
@@ -36,6 +38,7 @@ from .serializers import (
     SaleForecastGetSerializer,
     SaleSerializer,
     ShoppingMallSerializer,
+    UserListSerializer,UserCreateSerializer
 )
 
 
@@ -93,7 +96,7 @@ class ForecastViewSet(
         "^store",
         "^sku",
     )
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminOrReadOnlyPermission,)
 
     def get_queryset(self):
         queryset = self.queryset
@@ -114,7 +117,7 @@ class ForecastViewSet(
         methods=["GET"],
         detail=False,
         url_path="download_forecast_list",
-        permission_classes=(AllowAny,),
+        permission_classes=(IsAuthenticatedOrReadOnly,)
     )
     def download_forecast_list(fact_sku, fact_store):
         sku = get_object_or_404(Category, sku=fact_sku)
@@ -132,7 +135,7 @@ class StatisticSaleForecastViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
         "^store",
         "^sku",
     )
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = SaleForecastGetSerializer
 
 
@@ -143,7 +146,7 @@ class StatisticViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     filter_backends = (DjangoFilterBackend,)
     # filterset_class = CategoryFilter
     # search_fields = ("^sku",)
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         queryset = self.queryset
@@ -156,3 +159,11 @@ class StatisticViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             queryset = queryset.filter(sku=sku)
 
         return queryset
+    
+class UserViewSet(views.UserViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserListSerializer
+    pagination_class = LimitPageNumberPagination
+    permission_classes = (IsAuthenticated,)
+    http_method_names = ['get', 'post', 'delete']
+

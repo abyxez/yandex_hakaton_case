@@ -52,7 +52,7 @@ class Command(BaseCommand):
         #     ShoppingMall.objects.bulk_create(to_import)
         #     print(f"Список магазинов загружен.")
 
-        csv_file2 = settings.BASE_DIR / "pr_df_updated.csv"
+        csv_file2 = settings.BASE_DIR / "data" /"pr_df_updated.csv"
         with open(csv_file2, "r", encoding="utf8") as f:
             reader = csv.reader(f, delimiter=",")
             next(reader, None)
