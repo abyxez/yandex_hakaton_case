@@ -103,3 +103,9 @@ Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
 
     - почта:
     - пароль: 
+
+Команда:
+
+    - Константин Мельник(Старший backend-разработчик) 
+    - Гулин Игорь(backend-разработчик)
+    
