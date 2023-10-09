@@ -9,7 +9,7 @@ Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
 
 Порядок запуска на локальном компьютере: 
   Клонируйте репозиторий:
-   - git clone git@github.com:abyxez/yandex_hakaton_case.git
+      git clone git@github.com:abyxez/yandex_hakaton_case.git
   Создайте и активируйте виртуальное окружение в папке backend, обновите pip и установите зависимости:
    - python -m venv venv
    - venv/Scripts/activate
