@@ -445,9 +445,11 @@ class Excel(Model):
         verbose_name = "Вывод статистики"
         verbose_name_plural = "Вывод статистики"
 
-    def __str__(self):(
-            f"{self.store} {self.sku} {self.group}  "
-            f"{self.category} {self.subcategory} {self.uom} "
-            f"{self.week} {self.sales_units} {self.target} "
-            f"{self.difference} {self.wape}"
+    def __str__(self):
+        return (
+            f"{self.store} {self.sku} "
+            f"{self.group} {self.category} {self.subcategory }"
+            f"{self.uom} {self.week} {self.sales_units}"
+            f"{self.target} {self.difference} {self.wape}"
         )
+

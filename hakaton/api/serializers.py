@@ -45,6 +45,85 @@ class StoreSerializer(serializers.ModelSerializer):
         )
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
+class FormatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Format
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
+class SizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Size
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
+class DivisionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Division
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
+class SubcategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subcategory
+        exclude = (
+            "id",
+            "name",
+        )
+
+
+
 class ShoppingMallSerializer(serializers.ModelSerializer):
     """Сериализатор для магазинов."""
 
@@ -63,14 +142,32 @@ class ShoppingMallSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             "store": instance.store.hash_id,
-            "city": instance.city,
-            "division": instance.division,
-            "format": instance.format,
-            "location": instance.location,
-            "size": instance.size,
+            "city": instance.city.hash_id,
+            "division": instance.division.hash_id,
+            "format": instance.format.name,
+            "location": instance.location.name,
+            "size": instance.size.name,
             "is_active": instance.is_active,
         }
 
+    # def get_city(self, obj):
+    #     request = self.context.get("request")
+    #     to_represent = []
+    #     if request:
+    #         sku = request.query_params.get("sku")
+    #         store = request.query_params.get("store")
+    #         for date in dates:
+    #             if Forecast.objects.filter(
+    #                 sku=sku, store=store, date=date["date"]
+    #             ).exists():
+    #                 to_represent.append(
+    #                     Forecast.objects.annotate(
+    #                         forecast_units=F("sales_units"), forecast_dates=F("date")
+    #                     )
+    #                     .filter(sku=sku, store=store, forecast_dates=date["date"])
+    #                     .values("forecast_units", "forecast_dates")
+    #                 )
+    #     return to_represent
 
 class ForecastSaleSerializer(serializers.ModelSerializer):
     """
@@ -303,10 +400,15 @@ class ProductStoreSerializer(serializers.ModelSerializer):
         if request:
             sku = request.query_params.get("sku")
             store = request.query_params.get("store")
+            if sku and store:
+                forecast = forecast.filter(sku=sku, store=store)
             if sku:
                 forecast = forecast.filter(sku=sku)
-                if store:
-                    forecast = forecast.filter(store=store)
+            if store:
+                forecast = forecast.filter(store=store)
+            else:
+                return None
+        print(forecast)
         serializer = SimpleUnitsPostSerializer(forecast, many=True, read_only=True)
         return serializer.data
 
