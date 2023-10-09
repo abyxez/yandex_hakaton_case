@@ -513,8 +513,8 @@ class UserListSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'id','username',
-                  'first_name', 'last_name',
+        fields = ('email', 'id',
+                  'first_name', 'last_name',"job_title"
                   )
 
 
@@ -524,16 +524,16 @@ class UserCreateSerializer(UserCreateSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
-    username = serializers.CharField(
-        validators=[UniqueValidator(queryset=User.objects.all()),
-                    validate_username]
-    )
+    # username = serializers.CharField(
+    #     validators=[UniqueValidator(queryset=User.objects.all()),
+    #                 validate_username]
+    # )
 
     class Meta:
         model = User
         fields = (
-            'id', 'email', 'username','first_name',
-            'last_name', 'password'
+            'id', 'email','first_name',
+            'last_name', 'password', "job_title"
         )
 
 
