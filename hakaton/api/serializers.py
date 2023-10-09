@@ -1,12 +1,13 @@
-# from djoser.serializers import UserCreateSerializer, UserSerializer
-# from rest_framework.validators import UniqueValidator
-# from products.validators import validate_username
+from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework.validators import UniqueValidator
+from users.validators import validate_username
 from datetime import datetime
 from pprint import pprint
 
 from django.db.models import F
 from rest_framework import serializers
 
+from users.models import User
 from products.models import (
     Category,
     City,
@@ -430,8 +431,7 @@ class ProductStoreSerializer(serializers.ModelSerializer):
 class ForecastGetSerializer(serializers.ModelSerializer):
     """
     Cериализатор для просмотра прогноза товара.
-    Есть проблемы с выводом, грамотно выбрасывает
-    только если PAGE_SIZE = 1, сейчас 6 в settings.py
+    
     """
 
     store = StoreSerializer(read_only=True)
@@ -508,32 +508,33 @@ class ForecastPostSerializer(serializers.ModelSerializer):
         return ForecastGetSerializer(instance, context={"request": request}).data
 
 
-# class UserListSerializer(UserSerializer):
-#     """Сериализатор для списка пользователей."""
+class UserListSerializer(UserSerializer):
+    """Сериализатор для списка пользователей."""
 
-#     class Meta:
-#         model = User
-#         fields = ('email', 'id', 'username',
-#                   'first_name', 'last_name',
-#                   )
+    class Meta:
+        model = User
+        fields = ('email', 'id','username',
+                  'first_name', 'last_name',
+                  )
 
 
-# class UserCreateSerializer(UserCreateSerializer):
-#     """Сериализатор для создания пользователей."""
-#     username = serializers.CharField(
-#         validators=[UniqueValidator(queryset=User.objects.all()),
-#                     validate_username]
-#     )
-#     email = serializers.EmailField(
-#         validators=[UniqueValidator(queryset=User.objects.all())]
-#     )
+class UserCreateSerializer(UserCreateSerializer):
+    """Сериализатор для создания пользователей."""
+    
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    username = serializers.CharField(
+        validators=[UniqueValidator(queryset=User.objects.all()),
+                    validate_username]
+    )
 
-#     class Meta:
-#         model = User
-#         fields = (
-#             'id', 'email', 'username', 'first_name',
-#             'last_name', 'password'
-#         )
+    class Meta:
+        model = User
+        fields = (
+            'id', 'email', 'username','first_name',
+            'last_name', 'password'
+        )
 
 
 class ProductStoreForecastSerializer(serializers.ModelSerializer):

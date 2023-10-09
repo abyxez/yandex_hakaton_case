@@ -8,6 +8,7 @@ from api.views import (
     ShopsViewSet,
     StatisticSaleForecastViewSet,
     StatisticViewSet,
+    UserViewSet
 )
 
 app_name = "api"
@@ -17,7 +18,7 @@ router.register(r"products_store", ProductStoreViewSet, basename="categories")
 router.register(r"sales", SaleViewSet, basename="sales")
 router.register(r"shops", ShopsViewSet, basename="shops")
 router.register(r"forecast", ForecastViewSet, basename="forecast")
-# router.register(r'users', UserViewSet, basename='users')
+router.register(r'users', UserViewSet, basename='users')
 router.register(r"statistics", StatisticViewSet, basename="statistics")
 router.register(
     r"statistics_extended", StatisticSaleForecastViewSet, basename="statistics_2"
