@@ -83,7 +83,7 @@ from products.models import (
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        csv_file1 = settings.BASE_DIR / "data_with_weeks_fillna2.csv"
+        csv_file1 = settings.BASE_DIR / "data" / "data_with_weeks_fillna2.csv"
         with open(csv_file1, "r", encoding="utf8") as f:
             reader = csv.reader(f, delimiter=",")
             next(reader, None)
@@ -130,8 +130,6 @@ class Command(BaseCommand):
                         uom=pr_uom_id,
                     )
                     to_import.append(new_item)
-
-                    print(i / 750000)
                     i += 1
                 except (ZeroDivisionError, ValueError) as e:
                     target, total_sales_in_units, difference, wape = (
