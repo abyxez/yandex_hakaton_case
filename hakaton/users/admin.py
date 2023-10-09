@@ -9,11 +9,12 @@ class UserAdmin(ModelAdmin):
     list_display = (
         'id',
         'email',
+        'username',
         'first_name',
         'last_name',
         'job_title',
         
     )
-    search_fields = ('email',)
-    list_filter = ('email',)
+    search_fields = ('email','username')
+    list_filter = ('email','username')
     empty_value_display = '-empty-'

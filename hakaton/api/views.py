@@ -81,7 +81,7 @@ class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     filter_backends = (DjangoFilterBackend,)
     search_fields = ("^store",)
     serializer_class = ShoppingMallSerializer
-    # filterset_class = ShopFilter
+    filterset_class = ShopFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
