@@ -439,3 +439,16 @@ class Excel(Model):
     target = FloatField(null=True, blank=False)
     difference = FloatField(null=True, blank=False)
     wape = FloatField(null=True, blank=False)
+
+    class Meta:
+        ordering = ("week",)
+        verbose_name = "Вывод статистики"
+        verbose_name_plural = "Вывод статистики"
+
+    def __str__(self):
+        return (
+            f"{self.store} {self.sku} "
+            f"{self.group} {self.category} {self.subcategory }"
+            f"{self.uom} {self.week} {self.sales_units}"
+            f"{self.target} {self.difference} {self.wape}"
+        )
