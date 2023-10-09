@@ -7,61 +7,72 @@ Web-service for Lenta shop.
 Технологии:
 Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
 
-Порядок запуска на локальном компьютере: 
-      Клонируйте репозиторий:
-      git clone git@github.com:abyxez/yandex_hakaton_case.git
-  Создайте и активируйте виртуальное окружение в папке backend, обновите pip и установите зависимости:
-   - python -m venv venv
-   - venv/Scripts/activate
-   - python -m pip install --upgrade pip
-   - python -r requirements.txt
+Порядок запуска на локальном компьютере:
+
+    Клонируйте репозиторий:
+        - git clone git@github.com:abyxez/yandex_hakaton_case.git
+    
+    Создайте и активируйте виртуальное окружение в папке backend, обновите pip и установите зависимости:
+        - python -m venv venv
+        - venv/Scripts/activate
+        - python -m pip install --upgrade pip
+        - python -r requirements.txt
 
   
-   Создайте файл .env внутри папки  и внесите туда переменные окружения:
-    SECRET_KEY
-    ALLOWED_HOSTS
-    SECRET_KEY=<КЛЮЧ>
-    POSTGRES_USER=django_user
-    POSTGRES_PASSWORD=mysecretpassword
-    POSTGRES_DB=django
-    DB_HOST=db
-    DB_PORT=5432
-   Запустите сборку контейнера:
-    - docker-compose up -d --build
-    Примените миграции, соберите статику и создайте суперпользователя:
-    - docker-compose exec backend python manage.py makemigrations
-    - docker-compose exec backend python manage.py migrate
-    - docker-compose exec backend python manage.py collectstatic
-    - docker-compose exec backend python manage.py createsuperuser
-    Заполните базу :
-    - скопируйте необходимые файлы в папку backend/data 
-    - выполните команды в папке backend:
-        - docker-compose exec backend python manage.py import_hash_id
-        - docker-compose exec backend python manage.py import_csv
-        - docker-compose exec backend python manage.py import_excel
+    Создайте файл .env внутри папки  и внесите туда переменные окружения:
 
-Ресурсы API
-Документация Api будет находится по адресу:
-
-
-Порядок запуска на удаленном сервере:
-  Клонируйте репозиторий:
-   - git clone git@github.com:abyxez/foodgram-project-react.git
-  Скопируйте из репозитория файлы, расположенные в директории backend:
-    docker-compose.production.yml
-    nginx.conf
- На сервере создайте директорию ;
- В директории foodgram создайте директорию  и поместите в неё файлы:
-    docker-compose.production.yml
-    nginx.conf
-    .env со следующими данными:
+        SECRET_KEY
+        ALLOWED_HOSTS
         SECRET_KEY=<КЛЮЧ>
         POSTGRES_USER=django_user
         POSTGRES_PASSWORD=mysecretpassword
         POSTGRES_DB=django
         DB_HOST=db
         DB_PORT=5432
- В директории  следует выполнить команды:
+
+    Запустите сборку контейнера:
+        - docker-compose up -d --build
+
+    Примените миграции, соберите статику и создайте суперпользователя:
+        - docker-compose exec backend python manage.py makemigrations
+        - docker-compose exec backend python manage.py migrate
+        - docker-compose exec backend python manage.py collectstatic
+        - docker-compose exec backend python manage.py createsuperuser
+
+    Заполните базу :
+        - скопируйте необходимые файлы в папку backend/data 
+        - выполните команды в папке backend:
+            - docker-compose exec backend python manage.py import_hash_id
+            - docker-compose exec backend python manage.py import_csv
+            - docker-compose exec backend python manage.py import_excel
+
+Ресурсы API
+Документация Api будет находится по адресу:
+
+
+Порядок запуска на удаленном сервере:
+
+    Клонируйте репозиторий:
+        - git clone git@github.com:abyxez/foodgram-project-react.git
+    Скопируйте из репозитория файлы, расположенные в директории backend:
+        - docker-compose.production.yml
+        - nginx.conf
+
+На сервере создайте директорию ;
+
+В директории foodgram создайте директорию  и поместите в неё файлы:
+
+    - docker-compose.production.yml
+    - nginx.conf
+    - .env со следующими данными:
+        SECRET_KEY=<КЛЮЧ>
+        POSTGRES_USER=django_user
+        POSTGRES_PASSWORD=mysecretpassword
+        POSTGRES_DB=django
+        DB_HOST=db
+        DB_PORT=5432
+В директории  следует выполнить команды:
+
     sudo docker compose -f docker-compose.production.yml up -d
     sudo docker compose -f docker-compose.production.yml exec backend python manage.py makemigrations
     sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
@@ -85,9 +96,10 @@ Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
 
 
 Проект доступен по ссылкам:
-- 
+    - 
 
 
 Учетная запись администратора:
-- почта:
-- пароль: 
+
+    - почта:
+    - пароль: 
