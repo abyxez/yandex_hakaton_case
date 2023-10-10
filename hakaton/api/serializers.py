@@ -414,6 +414,8 @@ class ProductStoreSerializer(serializers.ModelSerializer):
 
 
 
+
+
 # class SimpleForecastPostSerializer(serializers.ModelSerializer):
 #     """
 #     Простой сериализатор товара для создания прогноза товара.
