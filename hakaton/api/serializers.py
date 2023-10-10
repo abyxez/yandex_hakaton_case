@@ -1,6 +1,5 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework.validators import UniqueValidator
-from users.validators import validate_username
 from datetime import datetime
 from pprint import pprint
 
