@@ -5,13 +5,10 @@ from django.db.models import (
     FloatField,
     ForeignKey,
     IntegerField,
-    ManyToManyField,
     Model,
     PositiveIntegerField,
-    SlugField,
 )
 
-# from django.contrib.auth.models import AbstractUser
 
 
 class Product(Model):
@@ -452,3 +449,4 @@ class Excel(Model):
             f"{self.uom} {self.week} {self.sales_units}"
             f"{self.target} {self.difference} {self.wape}"
         )
+

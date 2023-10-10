@@ -1,31 +1,19 @@
-import pandas as pd
-import xlwt
-from django.http import HttpResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from excel_response import ExcelResponse
-from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly,IsAuthenticated
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
 from djoser import views
 
 from users.models import User
 from products.models import (
     Category,
-    City,
-    Division,
     Excel,
     Forecast,
-    Format,
-    Location,
     ProductStore,
     Sale,
     ShoppingMall,
-    Size,
-    Store,
-    Subcategory,
 )
 
 from .filter import CategoryFilter, ForecastFilter, SaleFilter, ShopFilter
@@ -47,7 +35,7 @@ class ProductStoreViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ProductStoreSerializer
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    # filterset_class = CategoryFilter
+    filterset_class = CategoryFilter
     search_fields = ("^sku",)
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
@@ -61,7 +49,7 @@ class SaleViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         "^sku",
     )
     pagination_class = LimitPageNumberPagination
-    # filterset_class = SaleFilter
+    filterset_class = SaleFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
     def get_queryset(self):
@@ -81,7 +69,7 @@ class ShopsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     filter_backends = (DjangoFilterBackend,)
     search_fields = ("^store",)
     serializer_class = ShoppingMallSerializer
-    # filterset_class = ShopFilter
+    filterset_class = ShopFilter
     permission_classes = (IsAdminOrReadOnlyPermission,)
 
 
@@ -91,7 +79,7 @@ class ForecastViewSet(
     queryset = Forecast.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    # filterset_class = ForecastFilter
+    filterset_class = ForecastFilter
     search_fields = (
         "^store",
         "^sku",
@@ -119,6 +107,7 @@ class ForecastViewSet(
         url_path="download_forecast_list",
         permission_classes=(IsAuthenticatedOrReadOnly,)
     )
+
     def download_forecast_list(fact_sku, fact_store):
         sku = get_object_or_404(Category, sku=fact_sku)
         store = get_object_or_404(ShoppingMall, store=fact_store)
@@ -130,7 +119,6 @@ class StatisticSaleForecastViewSet(mixins.ListModelMixin, viewsets.GenericViewSe
     queryset = Excel.objects.all()
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    # filterset_class = SaleForecastFilter
     search_fields = (
         "^store",
         "^sku",
@@ -144,8 +132,8 @@ class StatisticViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ProductStoreSerializer
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    # filterset_class = CategoryFilter
-    # search_fields = ("^sku",)
+    filterset_class = CategoryFilter
+    search_fields = ("^sku",)
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
@@ -160,6 +148,7 @@ class StatisticViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
         return queryset
     
+
 class UserViewSet(views.UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserListSerializer

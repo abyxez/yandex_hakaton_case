@@ -14,7 +14,7 @@ from api.views import (
 app_name = "api"
 
 router = routers.DefaultRouter()
-router.register(r"products_store", ProductStoreViewSet, basename="categories")
+router.register(r"products_store", ProductStoreViewSet, basename="products_stores")
 router.register(r"sales", SaleViewSet, basename="sales")
 router.register(r"shops", ShopsViewSet, basename="shops")
 router.register(r"forecast", ForecastViewSet, basename="forecast")
