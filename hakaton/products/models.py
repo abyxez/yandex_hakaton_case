@@ -14,6 +14,7 @@ from django.db.models import (
 # from django.contrib.auth.models import AbstractUser
 
 
+
 class Product(Model):
     """
     Модель товара.
