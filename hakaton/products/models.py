@@ -452,3 +452,4 @@ class Excel(Model):
             f"{self.uom} {self.week} {self.sales_units}"
             f"{self.target} {self.difference} {self.wape}"
         )
+

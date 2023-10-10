@@ -19,7 +19,7 @@ class ProductURLTests(TestCase):
         )
         cls.store = Store.objects.create(
             hash_id="Тестовый магазин",
-            name="test-store"
+            name="test-store",
         )
         cls.group = Group.objects.create(
             hash_id="Тестовая группа товара",
