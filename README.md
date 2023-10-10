@@ -41,7 +41,7 @@ Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
 
     Заполните базу :
         - скопируйте необходимые файлы в папку hakaton/data 
-        - выполните команды в папке backend:
+        - выполните команды в папке hakaton:
             - docker-compose exec backend python manage.py import_hash_id
             - docker-compose exec backend python manage.py import_csv
             - docker-compose exec backend python manage.py import_excel
