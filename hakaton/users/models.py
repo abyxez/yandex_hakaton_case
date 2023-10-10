@@ -1,20 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from users.validators import validate_username
 from users.managers import CustomUserManager
 
 
 class User(AbstractUser):
     """Модель пользователей"""
-    # username = models.CharField(
-    #     verbose_name='Имя пользователя',
-    #     validators=(validate_username,),
-    #     max_length=150,
-    #     unique=True,
-    #     blank=False,
-    #     null=False
-    # )
+
     username = None
     email = models.EmailField(
         verbose_name='Email',

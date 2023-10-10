@@ -3,7 +3,9 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 
-from products.models import (Category, Forecast, Product, Sale, Store, Subcategory, Group, City, Division, Format, Location, Size, ShoppingMall, ProductStore)
+from products.models import (Category, Forecast, Product, Sale, Store, Subcategory, 
+                             Group, City, Division, Format, Location, 
+                             Size, ShoppingMall, ProductStore)
 
 User = get_user_model()
 

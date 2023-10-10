@@ -3,7 +3,9 @@ from django.test import Client, TestCase
 
 from api.serializers import (ForecastGetSerializer,SaleSerializer,
                              ShoppingMallSerializer,ProductStoreSerializer)
-from products.models import (Category, Forecast, Product, Sale, Store, Subcategory, Group, City, Division, Format, Location, Size, ShoppingMall, ProductStore)
+from products.models import (Category, Forecast, Product, Sale, Store, Subcategory, 
+                             Group, City, Division, Format, Location, Size, 
+                             ShoppingMall, ProductStore)
 
 User = get_user_model()
 

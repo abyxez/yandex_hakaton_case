@@ -7,7 +7,6 @@ from products.models import (
     Category,
     City,
     Division,
-    Excel,
     Forecast,
     Format,
     Location,

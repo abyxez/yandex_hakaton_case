@@ -5,13 +5,10 @@ from django.db.models import (
     FloatField,
     ForeignKey,
     IntegerField,
-    ManyToManyField,
     Model,
     PositiveIntegerField,
-    SlugField,
 )
 
-# from django.contrib.auth.models import AbstractUser
 
 
 class Product(Model):
