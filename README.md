@@ -19,7 +19,7 @@ Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
         - python -r requirements.txt
 
   
-    Создайте файл .env внутри папки  и внесите туда переменные окружения:
+    Создайте файл .env внутри папки hakaton и внесите туда переменные окружения:
 
         SECRET_KEY
         ALLOWED_HOSTS
@@ -40,68 +40,30 @@ Python 3.9, Django 3.2, DRF 3.12, Nginx, Docker, Docker-compose, Postgresql
         - docker-compose exec backend python manage.py createsuperuser
 
     Заполните базу :
-        - скопируйте необходимые файлы в папку backend/data 
+        - скопируйте необходимые файлы в папку hakaton/data 
         - выполните команды в папке backend:
             - docker-compose exec backend python manage.py import_hash_id
             - docker-compose exec backend python manage.py import_csv
             - docker-compose exec backend python manage.py import_excel
 
-Ресурсы API
-Документация Api будет находится по адресу:
-
-
-Порядок запуска на удаленном сервере:
-
-    Клонируйте репозиторий:
-        - git clone git@github.com:abyxez/foodgram-project-react.git
-    Скопируйте из репозитория файлы, расположенные в директории backend:
-        - docker-compose.production.yml
-        - nginx.conf
-
-На сервере создайте директорию ;
-
-В директории foodgram создайте директорию  и поместите в неё файлы:
-
-    - docker-compose.production.yml
-    - nginx.conf
-    - .env со следующими данными:
-        SECRET_KEY=<КЛЮЧ>
-        POSTGRES_USER=django_user
-        POSTGRES_PASSWORD=mysecretpassword
-        POSTGRES_DB=django
-        DB_HOST=db
-        DB_PORT=5432
-В директории  следует выполнить команды:
-
-    sudo docker compose -f docker-compose.production.yml up -d
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py makemigrations
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py createsuperuser
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_hash_id
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_csv
-    sudo docker compose -f docker-compose.production.yml exec backend python manage.py import_excel
-
- Выполните команды:
-
-    git add .
-    git commit -m "Имя коммита"
-    git push
-
- После этого будут запущены процессы workflow:
-
-    проверка кода на соответствие стандарту PEP8 (с помощью пакета flake8)
-    сборка и доставка докер-образов для контейнеров frontend и backend на Docker Hub
-    автоматический деплой проекта на сервер(копирование файлов docker-compose.production.yml и nginx.conf, создание миграций и сбор статики)
+    Локальный запуск без docker-compose:
+        - python manage.py makemigrations
+        - python manage.py migrate
+        - python manage.py collectstatic
+        - python manage.py createsuperuser
+        - python manage.py import_hash_id
+        - python manage.py import_import_csv
+        - python manage.py import_import_excel
+        - python manage.py runserver
 
 
 Проект доступен по ссылкам:
+http://127.0.0.1:8000/
+http://127.0.0.1:8000/admin
+http://127.0.0.1:8000/api
 
-Учетная запись администратора:
 
-    - почта:
-    - пароль: 
-
+Команда:
 
     - Константин Мельник(Старший backend-разработчик) 
     - Гулин Игорь(backend-разработчик)
