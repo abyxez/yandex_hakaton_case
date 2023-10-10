@@ -12,27 +12,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG: bool = os.getenv('DEBUG', 'False').lower() == 'true'
 DEBUG = True
 
 ALLOWED_HOSTS: list[str] = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-# DATETIME_INPUT_FORMATS = [
-# '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30:59'
-# '%Y-%m-%d %H:%M:%S.%f',  # '2006-10-25 14:30:59.000200'
-# '%Y-%m-%d %H:%M',        # '2006-10-25 14:30'
-# '%Y-%m-%d',              # '2006-10-25'
-# '%m/%d/%Y %H:%M:%S',     # '10/25/2006 14:30:59'
-# '%m/%d/%Y %H:%M:%S.%f',  # '10/25/2006 14:30:59.000200'
-# '%m/%d/%Y %H:%M',        # '10/25/2006 14:30'
-# '%m/%d/%Y',              # '10/25/2006'
-# '%m/%d/%y %H:%M:%S',     # '10/25/06 14:30:59'
-# '%m/%d/%y %H:%M:%S.%f',  # '10/25/06 14:30:59.000200'
-# '%m/%d/%y %H:%M',        # '10/25/06 14:30'
-# '%m/%d/%y',              # '10/25/06'
-# ]
 
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -41,7 +25,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "drf_yasg",
     "rest_framework",
     "rest_framework.authtoken",
     # 'rest_framework_swagger',
@@ -160,16 +143,12 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticatedOrReadOnly"
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        # "rest_framework_simplejwt.authentication.JWTAuthentication",
         'rest_framework.authentication.TokenAuthentication',
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
 
-# SIMPLE_JWT = {
-#     "AUTH_HEADER_TYPES": ("JWT",),
-# }
 
 DJOSER = {
     'LOGIN_FIELD': 'email',

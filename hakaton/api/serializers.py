@@ -1,7 +1,6 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework.validators import UniqueValidator
 from datetime import datetime
-from pprint import pprint
 
 from django.db.models import F
 from rest_framework import serializers
@@ -62,7 +61,6 @@ class CitySerializer(serializers.ModelSerializer):
         )
 
 
-
 class FormatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Format
@@ -70,7 +68,6 @@ class FormatSerializer(serializers.ModelSerializer):
             "id",
             "name",
         )
-
 
 
 class SizeSerializer(serializers.ModelSerializer):
@@ -82,7 +79,6 @@ class SizeSerializer(serializers.ModelSerializer):
         )
 
 
-
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
@@ -90,7 +86,6 @@ class LocationSerializer(serializers.ModelSerializer):
             "id",
             "name",
         )
-
 
 
 class DivisionSerializer(serializers.ModelSerializer):
@@ -102,7 +97,6 @@ class DivisionSerializer(serializers.ModelSerializer):
         )
 
 
-
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
@@ -112,7 +106,6 @@ class GroupSerializer(serializers.ModelSerializer):
         )
 
 
-
 class SubcategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Subcategory
@@ -120,7 +113,6 @@ class SubcategorySerializer(serializers.ModelSerializer):
             "id",
             "name",
         )
-
 
 
 class ShoppingMallSerializer(serializers.ModelSerializer):
@@ -149,24 +141,6 @@ class ShoppingMallSerializer(serializers.ModelSerializer):
             "is_active": instance.is_active,
         }
 
-    # def get_city(self, obj):
-    #     request = self.context.get("request")
-    #     to_represent = []
-    #     if request:
-    #         sku = request.query_params.get("sku")
-    #         store = request.query_params.get("store")
-    #         for date in dates:
-    #             if Forecast.objects.filter(
-    #                 sku=sku, store=store, date=date["date"]
-    #             ).exists():
-    #                 to_represent.append(
-    #                     Forecast.objects.annotate(
-    #                         forecast_units=F("sales_units"), forecast_dates=F("date")
-    #                     )
-    #                     .filter(sku=sku, store=store, forecast_dates=date["date"])
-    #                     .values("forecast_units", "forecast_dates")
-    #                 )
-    #     return to_represent
 
 class ForecastSaleSerializer(serializers.ModelSerializer):
     """
@@ -284,22 +258,6 @@ class SaleSerializer(serializers.ModelSerializer):
         serializer = SimpleSaleSerializer(sales, many=True, read_only=True)
         return serializer.data
 
-    # def to_representation(self, instance):
-    #     return {
-    #         "store": instance.store.hash_id,
-    #         "sku": instance.sku.hash_id,
-    #         "fact": [{
-    #             "date": instance.date,
-    #             "sales_type": instance.sales_type,
-    #             "sales_units": instance.sales_units,
-    #             "sales_units_promo": instance.sales_units_promo,
-    #             "sales_rub": instance.sales_rub,
-    #             "sales_rub_promo": instance.sales_rub_promo,
-    #             # 'forecast': instance.forecast,
-    #             # 'wape': instance.wape,
-    #     }],
-    #     }
-
 
 class SimpleUnitsPostSerializer(serializers.ModelSerializer):
     """
@@ -335,15 +293,6 @@ class ProductStoreSerializer(serializers.ModelSerializer):
             "forecast",
         )
 
-    # def to_representation(self, instance):
-    #     return {
-    #         'store': instance.store.hash_id,
-    #         "sku": instance.sku.hash_id,
-    #         "group": instance.group,
-    #         "category": instance.category,
-    #         "subcategory": instance.subcategory,
-    #         "uom": instance.uom,
-    #     }
 
     def get_group(self, obj):
         queryset = ProductStore.objects.all()
@@ -412,23 +361,6 @@ class ProductStoreSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
-
-
-
-
-# class SimpleForecastPostSerializer(serializers.ModelSerializer):
-#     """
-#     Простой сериализатор товара для создания прогноза товара.
-#     """
-
-#     sales_units = SimpleUnitsPostSerializer(many=True)
-#     sku = serializers.StringRelatedField(read_only=True)
-
-#     class Meta:
-#         model = Forecast
-#         fields = ("sku", "sales_units")
-
-
 class ForecastGetSerializer(serializers.ModelSerializer):
     """
     Cериализатор для просмотра прогноза товара.
@@ -438,8 +370,6 @@ class ForecastGetSerializer(serializers.ModelSerializer):
     store = StoreSerializer(read_only=True)
     sku = ProductSerializer(read_only=True)
     forecast = serializers.SerializerMethodField()
-    # forecast = SimpleUnitsPostSerializer(read_only=True, source="*")
-    # forecast = serializers.StringRelatedField(read_only=True)
     forecast_date = serializers.SerializerMethodField()
 
     class Meta:
@@ -525,10 +455,7 @@ class UserCreateSerializer(UserCreateSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
-    # username = serializers.CharField(
-    #     validators=[UniqueValidator(queryset=User.objects.all()),
-    #                 validate_username]
-    # )
+  
 
     class Meta:
         model = User
@@ -589,13 +516,6 @@ class ProductStoreForecastSerializer(serializers.ModelSerializer):
         serializer = StoreSerializer(stores, many=True, read_only=True)
         return serializer.data
 
-    # def to_representation(self, instance):
-    #     return {
-    #         "store": instance.store.hash_id,
-    #         "sku": instance.sku.hash_id,
-    #         "group": instance.group,
-    #         "forecast": {f"{instance.date}": instance.sales_units},
-    #     }
 
 
 class SaleForecastGetSerializer(serializers.ModelSerializer):

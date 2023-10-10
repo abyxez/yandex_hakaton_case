@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
 
-from products.models import Category, Forecast, Sale, City, Division, Subcategory, Format, Location, ProductStore, Excel, Size, Store, ShoppingMall
+from products.models import Forecast, Sale, ProductStore, ShoppingMall
 
 
 @register(ShoppingMall)
